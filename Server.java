@@ -1,11 +1,12 @@
+import java.io.*;
+import java.net.*;
 
 public class Server {
-	
-	// atts
-	
-	// methods
-	public static void main(String [ ] args){
-		String port1 = args[0];
+	public static void main(String [ ] args) throws Exception{
 		
+		//Port Number
+		Integer port1 = Integer.parseInt(args[0]);
+		//Start thread
+		new ServerThread(port1).start();
 	}
 }
