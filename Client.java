@@ -41,6 +41,15 @@ public class Client {
       return true;
   }
 
+  public static boolean isGoodPlate(String plate){
+      String[] parts = plate.split("-");
+      if (parts.length != 3) return false;
+      for( String part : parts){
+        if (!part.matches("\\w\\w") && !part.matches("\\d\\d")) return false;
+      }
+      return true;
+  }
+
   public static String getRequestMsg(String[] args){
 
     ArrayList<String> untreatedMsg = new ArrayList<String>();
@@ -74,7 +83,13 @@ public class Client {
         return;
       }
 
-      msg = getRequestMsg(args); 
+      // verificar plate
+      if (!isGoodPlate(args[3])){
+        System.out.println("ERROR: " + args[3] + " is not a valid plate!");
+        return;
+      }
+
+      msg = getRequestMsg(args);
 
       // Inicializar socket, packet, endereco
       initRequirements(args[0], args[1], msg);
@@ -82,15 +97,18 @@ public class Client {
       // send request
       clientSocket.send(datagramPacket);
 
+      // reset packet object
       datagramPacket = new DatagramPacket(buffer, buffer.length);
+
+      // receive response
       clientSocket.receive(datagramPacket);
 
       // display response
       String received = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
-      System.out.println("Quote of the Moment: " + received);
+      System.out.println(msg + ": " + received);
 
+      // close the socket used
       clientSocket.close();
-
   }
 
 }

@@ -5,7 +5,7 @@ public class Parking {
 	public class Vehicle{
 		String plate;
 		String owner;
-		
+
 		public Vehicle(String plate,String owner){
 			this.plate = plate;
 			this.owner = owner;
@@ -16,7 +16,7 @@ public class Parking {
 	public Parking(){
 		this.vehicles = new ArrayList<Vehicle>();
 	}
-	
+
 	public String addVehicle(String plate,String owner){
 		Vehicle vehicle = new Vehicle(plate,owner);
 		for(int i = 0;i < this.vehicles.size();i++){
@@ -27,13 +27,13 @@ public class Parking {
 		this.vehicles.add(vehicle);
 		return "" + this.vehicles.size();
 	}
-	
+
 	public String lookupVehicle(String plate){
 		for(int i = 0;i < this.vehicles.size();i++){
 			if(this.vehicles.get(i).plate.equals(plate)){
 				return this.vehicles.get(i).owner;
 			}
 		}
-		return null;
+		return "NOT_FOUND";
 	}
 }
