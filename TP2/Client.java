@@ -4,9 +4,9 @@ import java.net.*;
 
 public class Client {
 
-  private static DatagramSocket clientSocket;
+  private static MulticastSocket clientSocket;
   private static DatagramPacket datagramPacket;
-  private static InetAddress hostAddress;
+  private static InetAddress multicastAddress;
   private static int portNumber;
 
   private static String msg;
@@ -14,20 +14,18 @@ public class Client {
 
   public static void initRequirements(String hostName, String portString, String message) throws Exception{
 
-      // Alocar Socket
-      clientSocket = new DatagramSocket();
-
       // Inicializar um buffer
       buffer = new byte[512];
 
       // Decode do endereco obtido por argumento
-      hostAddress = InetAddress.getByName(hostName);
+      multicastAddress = InetAddress.getByName(hostName);
 
       // decode do port number
       portNumber = Integer.parseInt(portString);
 
       // Inicializar um packet, com length escolhida no buffer
-      datagramPacket = new DatagramPacket(message.getBytes(), message.getBytes().length, hostAddress, portNumber);
+      datagramPacket = new DatagramPacket(message.getBytes(), message.getBytes().length, multicastAddress, portNumber);
+
   }
 
   public static boolean checkOper(String[] args){
@@ -94,18 +92,31 @@ public class Client {
       // Inicializar socket, packet, endereco
       initRequirements(args[0], args[1], msg);
 
+      clientSocket = new MulticastSocket(portNumber);
+
+      // join multicast group
+      clientSocket.joinGroup(multicastAddress);
+
       // send request
       clientSocket.send(datagramPacket);
 
-      // reset packet object
-      datagramPacket = new DatagramPacket(buffer, buffer.length);
+      while(true){
 
-      // receive response
-      clientSocket.receive(datagramPacket);
+        // reset packet object
+        datagramPacket = new DatagramPacket(buffer, buffer.length, multicastAddress, portNumber);
 
-      // display response
-      String received = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
-      System.out.println(msg + ": " + received);
+        // receive response
+        clientSocket.receive(datagramPacket);
+
+        // display response
+        String received = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
+        System.out.println(msg + ": " + received);
+
+        break;
+      }
+
+      // done talking, let's leave
+      clientSocket.leaveGroup(multicastAddress);
 
       // close the socket used
       clientSocket.close();
