@@ -19,7 +19,7 @@ public class ServerThread extends Thread{
 			portmcst = portmcast;
 			// abrir socket com port number introduzido
 			socket1 = new DatagramSocket(port);
-			this.addr = InetAddress.getLocalHost();
+			this.addr = InetAddress.getByName("localhost");
 			this.port = port;
 	}
 

@@ -5,6 +5,7 @@ import java.net.*;
 public class Client {
 
   private static MulticastSocket clientSocket;
+  private static DatagramSocket clientDatagramSocket;
   private static DatagramPacket datagramPacket;
   private static InetAddress multicastAddress;
   private static int portNumber;
@@ -97,23 +98,30 @@ public class Client {
       // join multicast group
       clientSocket.joinGroup(multicastAddress);
 
+      System.out.println("Address: " + multicastAddress +":" + portNumber);
       // send request
-      clientSocket.send(datagramPacket);
+      //clientSocket.send(datagramPacket);
 
-      while(true){
+      boolean done = false;
+
+      while (!done){
 
         // reset packet object
-        datagramPacket = new DatagramPacket(buffer, buffer.length, multicastAddress, portNumber);
+        datagramPacket = new DatagramPacket(buffer, buffer.length);
 
         // receive response
         clientSocket.receive(datagramPacket);
+        System.out.println("Here");
+        System.out.println("Received: " + datagramPacket.getData());
 
-        // display response
-        String received = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
-        System.out.println(msg + ": " + received);
-
-        break;
       }
+
+
+      //System.out.println(datagramPacket.getData());
+
+      // display response
+      //String received = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
+      //System.out.println(msg + ": " + received);
 
       // done talking, let's leave
       clientSocket.leaveGroup(multicastAddress);
