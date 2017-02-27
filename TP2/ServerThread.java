@@ -10,33 +10,37 @@ public class ServerThread extends Thread{
 	public Integer portmcst;
 	public InetAddress addr;
 	public Integer port;
-	
-	
+
+
 
 	public ServerThread(int port,String addrmcast,int portmcast) throws IOException{
 			super("Servidor");
-			addrmcst = InetAddress.getByName(addrmcast);
-			portmcst = portmcast;
+
+			this.addrmcst = InetAddress.getByName(addrmcast);
+			this.portmcst = portmcast;
+
 			// abrir socket com port number introduzido
 			socket1 = new DatagramSocket(port);
+
 			this.addr = InetAddress.getByName("localhost");
 			this.port = port;
 	}
 
 	public void run(){
 
-		System.out.println("Server running cowboy at multicast address" + addrmcst + ":" + portmcst);
-		
 		while(morePlates){
 			try{
 				byte[] buf = new byte[256];
 				byte[] buf2 = new byte[256];
-				
+
 				//broadcast server ip
-				buf2 = (this.addr.getAddress() +":"+this.port).getBytes();
+				String toBuf2 = this.addr + ":" + this.port;
+				buf2 = toBuf2.getBytes();
+
 				DatagramPacket broadcast = new DatagramPacket(buf2,buf2.length,addrmcst,portmcst);
 				socket1.send(broadcast);
-				System.out.println("Sent my address to all the cowboys in the ranch, it is " + this.addr.getHostAddress() +":"+this.port);
+				
+				System.out.println("multicast: " + this.addrmcst + " " + this.portmcst + " : " + this.addr + " " + this.port);
 
 				//Receive request
 				DatagramPacket packet = new DatagramPacket(buf,buf.length);
@@ -65,7 +69,7 @@ public class ServerThread extends Thread{
 				socket1.send(packet);
 
 			}catch(Exception e){
-				
+
 			}
 		}
 		socket1.close();
