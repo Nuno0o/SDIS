@@ -26,7 +26,7 @@ public class ServerThread extends Thread{
 				socket = srvsocket.accept();
 
 				BufferedReader inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
-				DataOutputStream outToClient = new DataOutputStream(socket.getOutputStream());
+			  PrintWriter outToClient = new PrintWriter(socket.getOutputStream(), true);
 				//Do the job
 				String plateAndOwner = inFromClient.readLine();
 
@@ -42,7 +42,7 @@ public class ServerThread extends Thread{
 					ret = this.park.lookupVehicle(parts[1]);
 					buf = (parts[1] + " " + ret);
 				}
-				outToClient.writeBytes(buf);
+				outToClient.println(buf);
 				System.out.println("Sent: " + buf);
 
 			}catch(IOException e){
