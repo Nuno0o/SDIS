@@ -43,6 +43,7 @@ public class ServerThread extends Thread{
 					buf = (parts[1] + " " + ret);
 				}
 				outToClient.writeBytes(buf);
+				System.out.println("Sent: " + buf);
 
 			}catch(IOException e){
 				morePlates = false;
@@ -52,7 +53,7 @@ public class ServerThread extends Thread{
 			socket.close();
 			srvsocket.close();
 		}catch(Exception e){
-			
+
 		}
 	}
 }

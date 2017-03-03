@@ -4,30 +4,35 @@ import java.net.*;
 
 public class Client {
 
-  private static DatagramSocket clientSocket;
-  private static DatagramPacket datagramPacket;
-  private static InetAddress hostAddress;
+  private static Socket clientSocket;
+  private static PrintWriter socketOut;
+  private static BufferedReader socketIn;
+  private static BufferedReader stdIn;
+
+  private static String hostName;
   private static int portNumber;
 
   private static String msg;
-  private static byte[] buffer;
 
   public static void initRequirements(String hostName, String portString, String message) throws Exception{
-
-      // Alocar Socket
-      clientSocket = new DatagramSocket();
-
-      // Inicializar um buffer
-      buffer = new byte[512];
-
-      // Decode do endereco obtido por argumento
-      hostAddress = InetAddress.getByName(hostName);
 
       // decode do port number
       portNumber = Integer.parseInt(portString);
 
-      // Inicializar um packet, com length escolhida no buffer
-      datagramPacket = new DatagramPacket(message.getBytes(), message.getBytes().length, hostAddress, portNumber);
+      try {
+        // Alocar Socket
+        clientSocket = new Socket(hostName, portNumber);
+
+        socketOut = new PrintWriter(clientSocket.getOutputStream(), true);
+
+        socketIn = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
+
+        stdIn = new BufferedReader(new InputStreamReader(System.in));
+      } catch (Exception e) {
+        System.out.println("An error occured during startup.");
+        System.exit(1);
+      }
+
   }
 
   public static boolean checkOper(String[] args){
@@ -94,18 +99,14 @@ public class Client {
       // Inicializar socket, packet, endereco
       initRequirements(args[0], args[1], msg);
 
-      // send request
-      clientSocket.send(datagramPacket);
+      if (msg != null){
+        socketOut.println(msg);
+        System.out.println("Sent: " + msg);
+      }
 
-      // reset packet object
-      datagramPacket = new DatagramPacket(buffer, buffer.length);
+      String received = socketIn.readLine();
 
-      // receive response
-      clientSocket.receive(datagramPacket);
-
-      // display response
-      String received = new String(datagramPacket.getData(), 0, datagramPacket.getLength());
-      System.out.println(msg + ": " + received);
+      if (received != null) System.out.println("Received: " + received);
 
       // close the socket used
       clientSocket.close();
