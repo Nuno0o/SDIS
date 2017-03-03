@@ -3,7 +3,8 @@ import java.net.*;
 
 public class ServerThread extends Thread{
 
-	public DatagramSocket socket = null;
+	public ServerSocket srvsocket = null;
+	public Socket socket = null;
 	public boolean morePlates = true;
 	public Parking park = new Parking();
 
@@ -11,7 +12,7 @@ public class ServerThread extends Thread{
 			super("Servidor");
 
 			// abrir socket com port number introduzido
-			socket = new DatagramSocket(port);
+			srvsocket = new ServerSocket(port);
 	}
 
 	public void run(){
@@ -20,14 +21,14 @@ public class ServerThread extends Thread{
 
 		while(morePlates){
 			try{
-				byte[] buf = new byte[256];
-
+				String buf = new String();
 				//Receive request
-				DatagramPacket packet = new DatagramPacket(buf,buf.length);
-				socket.receive(packet);
+				socket = srvsocket.accept();
 
+				BufferedReader inFromClient = new BufferedReader(new InputStreamReader(socket.getInputStream()));
+				DataOutputStream outToClient = new DataOutputStream(socket.getOutputStream());
 				//Do the job
-				String plateAndOwner = new String(packet.getData());
+				String plateAndOwner = inFromClient.readLine();
 
 				System.out.println(plateAndOwner);
 
@@ -36,21 +37,22 @@ public class ServerThread extends Thread{
 				String ret;
 				if(parts[0].equals("REGISTER")){
 					ret = this.park.addVehicle(parts[1], parts[2]);
-					buf = ret.getBytes();
+					buf = ret;
 				}else if(parts[0].equals("LOOKUP")){
 					ret = this.park.lookupVehicle(parts[1]);
-					buf = (parts[1] + " " + ret).getBytes();
+					buf = (parts[1] + " " + ret);
 				}
-
-				InetAddress address = packet.getAddress();
-				int port = packet.getPort();
-				packet = new DatagramPacket(buf,buf.length,address,port);
-				socket.send(packet);
+				outToClient.writeBytes(buf);
 
 			}catch(IOException e){
 				morePlates = false;
 			}
 		}
-		socket.close();
+		try{
+			socket.close();
+			srvsocket.close();
+		}catch(Exception e){
+			
+		}
 	}
 }
