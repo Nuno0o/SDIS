@@ -1,9 +1,9 @@
 import java.security.MessageDigest;
 
 public class FileChunk {
-	String fileId;
-	String fileName;
-	int chunkNo;
+	public String fileId;
+	public String fileName;
+	public int chunkNo;
 	byte[] data;
 
 	public FileChunk(String filename,byte[] data,int chunkNo){
