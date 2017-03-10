@@ -8,7 +8,7 @@ public class ServerThread extends Thread{
 	public Parking park = new Parking();
 	public InetAddress addrmcst;
 	public Integer portmcst;
-	public InetAddress addr;
+	public InetAddress addr; 
 	public Integer port;
 
 
@@ -39,7 +39,7 @@ public class ServerThread extends Thread{
 
 				DatagramPacket broadcast = new DatagramPacket(buf2,buf2.length,addrmcst,portmcst);
 				socket1.send(broadcast);
-				
+
 				System.out.println("multicast: " + this.addrmcst + " " + this.portmcst + " : " + this.addr + " " + this.port);
 
 				//Receive request
