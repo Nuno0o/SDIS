@@ -1,9 +1,10 @@
 import java.net.*;
 
 public class Channel extends Thread {
-	protected static Peer peer;
-	protected static MulticastSocket msocket;
-	protected static byte[] buffer;
+	protected Peer peer;
+	protected MulticastSocket msocket;
+	protected byte[] buffer;
+	protected DatagramPacket packet;
 	
 	public Channel(Peer p){
 		super("Peer" + p.peerNumber);
@@ -12,7 +13,7 @@ public class Channel extends Thread {
 		
 		this.msocket = null;
 		
-		this.buffer = new byte[256000];
+		this.buffer = new byte[Constants.MAX_BUFFER_SIZE];
 	}
 	
 }
