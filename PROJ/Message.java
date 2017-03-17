@@ -56,11 +56,11 @@ public class Message {
   public String putchunkMsg(int senderId, String fileId, int chunkNo, int repDeg, String body){
 
     if (body.length() > this.MAX_BODY_SIZE){
-      System.out.println("Error! Chunk bigger than 64KByte");
+      System.out.println("Error! Chunk bigger than " + this.MAX_CHUNK_SIZE + " bytes");
       return "";
     }
 
-    String header = this.createHeader("PUTCHUNK", "1.0", senderId, fileId, chunkNo, repgDeg);
+    String header = this.createHeader("PUTCHUNK", "1.0", senderId, fileId, chunkNo, repDeg);
 
     if (!header.equals("")){
       return header + this.CRLF + body;
