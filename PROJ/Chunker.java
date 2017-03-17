@@ -40,7 +40,7 @@ public class Chunker {
 			return null;
 		}
 		//Create chunk
-		FileChunk chunk = new FileChunk(file.getName(),data,this.chunkNo);
+		FileChunk chunk = new FileChunk(file.getName() + ":" + System.currentTimeMillis(),data,this.chunkNo);
 		//Increment chunk counter
 		chunkNo++;
 		//Increment length read
