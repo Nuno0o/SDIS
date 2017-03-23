@@ -14,6 +14,8 @@ public class Channel extends Thread {
 		this.msocket = null;
 		
 		this.buffer = new byte[Constants.MAX_BUFFER_SIZE];
+		
+		this.packet = new DatagramPacket(this.buffer,Constants.MAX_BUFFER_SIZE);
 	}
 	
 }
