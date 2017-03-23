@@ -5,6 +5,9 @@ import threading.MCchannel;
 import threading.MDBchannel;
 import threading.MDRchannel;
 import java.net.*;
+import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 
 public class Peer {
 
@@ -12,17 +15,17 @@ public class Peer {
 	public String protocol_version;
 	public String remote_name;
 	public int peerNumber;
-	
+
 	//Multicast IPs
 	public InetAddress mcastMC;
 	public InetAddress mcastMDB;
 	public InetAddress mcastMDR;
-	
+
 	//Multicast ports
 	public int portMC;
 	public int portMDB;
 	public int portMDR;
-	
+
 	//Multicast Channels
 	MCchannel MC;
 	MDBchannel MDB;
@@ -37,13 +40,13 @@ public class Peer {
 		try{
 			this.mcastMC = InetAddress.getByName(args[3]);
 			this.portMC = Integer.parseInt(args[4]);
-			
+
 			this.mcastMDB = InetAddress.getByName(args[5]);
 			this.portMDB = Integer.parseInt(args[6]);
-			
+
 			this.mcastMDR = InetAddress.getByName(args[7]);
 			this.portMDR = Integer.parseInt(args[8]);
-			
+
 			this.MC = new MCchannel(this);
 			this.MDB = new MDBchannel(this);
 			this.MDR = new MDRchannel(this);
@@ -54,9 +57,24 @@ public class Peer {
 	}
 	//Start channels
 	public void start(){
+
 		this.MC.start();
 		this.MDB.start();
 		this.MDR.start();
+
+		try {
+
+			RemoteService remoteService = new RemoteService(this);
+
+			Registry registry = LocateRegistry.getRegistry();
+			registry.bind(this.remote_name, remoteService);
+			System.out.println("Remote Object Created");
+
+		} catch (Exception e){
+			System.err.println("Peer exception on remote try:" + e.toString());
+			e.printStackTrace();
+		}
+
 	}
 
 }
