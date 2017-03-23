@@ -90,7 +90,7 @@ public class Client implements Interaction{
 
         String received = new String();
         received = stub.processRequest(msg);
-        System.out.println("response: " + received);
+        System.out.println("response: " + received..);
         System.out.println(msg + ": " + received);
 
       } catch (Exception e){

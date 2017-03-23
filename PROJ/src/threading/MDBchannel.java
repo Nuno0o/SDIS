@@ -18,15 +18,20 @@ public class MDBchannel extends Channel {
 	}
 
 	public void run(){
+		//Channel cycle
 		while(true){
+			//Receive UDP datagram, continue if failed
 			try{
-
 				this.msocket.receive(this.packet);
-
-			} catch(Exception e){
-				System.out.println("Caught IOException in MDBchannel");
-				break;
+			}catch(Exception e){
+				System.out.println("Error receiving packet on MC");
+				continue;
 			}
+			//Parse packet
+			String packetData = new String(this.packet.getData());
+			String[] splitStr = packetData.split("\\s+");
+
+
 		}
 	}
 }
