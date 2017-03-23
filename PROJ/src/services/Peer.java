@@ -27,9 +27,9 @@ public class Peer {
 	public int portMDR;
 
 	//Multicast Channels
-	MCchannel MC;
-	MDBchannel MDB;
-	MDRchannel MDR;
+	public MCchannel MC;
+	public MDBchannel MDB;
+	public MDRchannel MDR;
 
 	public Peer(String[] args){
 		//Init peer information

@@ -5,7 +5,7 @@ public class FileChunk {
 	public String fileId;
 	public String fileName;
 	public int chunkNo;
-	byte[] data;
+	public byte[] data;
 
 	public FileChunk(String filename,byte[] data,int chunkNo){
 		//File name

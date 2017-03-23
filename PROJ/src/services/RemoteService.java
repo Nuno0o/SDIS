@@ -22,10 +22,8 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
       while (currentChunk != null) {
           //TODO:Call subprotocol with chunk...
-
           currentChunk = this.chunker.nextChunk();
       }
-
       return true;
   }
 
