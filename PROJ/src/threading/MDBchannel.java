@@ -29,8 +29,8 @@ public class MDBchannel extends Channel {
 			}
 			//Parse packet
 			String packetData = new String(this.packet.getData());
-			String[] splitStr = packetData.split("\\s+");
-
+			this.packetmanager.handlePacket(packetData);
+			
 
 		}
 	}

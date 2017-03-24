@@ -2,6 +2,8 @@ package services;
 
 import fileManagement.Chunker;
 import fileManagement.FileChunk;
+import subprotocols.BackupSubprotocol;
+
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 
