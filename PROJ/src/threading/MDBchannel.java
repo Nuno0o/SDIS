@@ -1,6 +1,8 @@
 package threading;
 
+import services.PacketManager;
 import services.Peer;
+
 import java.net.*;
 
 public class MDBchannel extends Channel {
@@ -23,6 +25,15 @@ public class MDBchannel extends Channel {
 			//Receive UDP datagram, continue if failed
 			try{
 				this.msocket.receive(this.packet);
+
+				String packetData = new String(this.packet.getData(), 0, this.packet.getLength());
+
+				// handle STORED packet
+				PacketManager p = new PacketManager(this.peer);
+				if (p.handlePacket(packetData)){
+					// TODO: handler: write chunk to a file
+				}
+
 			}catch(Exception e){
 				System.out.println("Error receiving packet on MC");
 				continue;
@@ -30,7 +41,7 @@ public class MDBchannel extends Channel {
 			//Parse packet
 			String packetData = new String(this.packet.getData());
 			this.packetmanager.handlePacket(packetData);
-			
+
 
 		}
 	}
