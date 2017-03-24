@@ -8,9 +8,10 @@ import fileManagement.FileChunk;
 import utilities.RandomDelay;
 import utilities.Constants;
 
+import java.io.IOException;
+import java.util.HashSet;
 import java.net.MulticastSocket;
 import java.net.DatagramPacket;
-import java.io.IOException;
 
 public class BackupSubprotocol{
 
@@ -66,6 +67,8 @@ public class BackupSubprotocol{
 
             int storedReceived = 0;
 
+            HashSet<Integer> peersResponded = new HashSet<Integer>();
+
             while(storedReceived < this.repDeg){
 
                 try{
@@ -74,7 +77,6 @@ public class BackupSubprotocol{
                     System.out.println("Didn't receive enough confirmations");
                     break;
                 }
-
 
                 String packetData = new String(this.peer.MC.packet.getData());
                 String[] splitStr = packetData.split("\\s+");
@@ -85,7 +87,12 @@ public class BackupSubprotocol{
                     splitStr[3] == this.chunk.fileId &&
                     Integer.parseInt(splitStr[4]) == this.chunk.chunkNo)
                 {
-                    storedReceived++;
+
+                    //TODO: check if this works...
+                    if (!peersResponded.contains(new Integer(splitStr[2]))){
+                        peersResponded.add(new Integer(splitStr[2]));
+                        storedReceived++;
+                    }
                 }
 
             }

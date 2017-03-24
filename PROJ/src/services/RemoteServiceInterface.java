@@ -5,7 +5,7 @@ import java.rmi.*;
 public interface RemoteServiceInterface extends Remote{
 
     // The backup execution method
-    public boolean backup(String path, int repDeg);
+    public void backup(String path, int repDeg) throws RemoteException;
 
     // The restore execution method
     //public void restore();
