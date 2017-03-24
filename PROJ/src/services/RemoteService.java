@@ -7,11 +7,12 @@ import java.rmi.RemoteException;
 
 public class RemoteService extends UnicastRemoteObject implements RemoteServiceInterface{
 
-  public int peerNo;
+  public Peer peer;
   public Chunker chunker;
+  public BackupSubprotocol backupSubprotocol;
 
   public RemoteService(Peer peer) throws RemoteException{
-    this.peerNo = peer.peerNumber;
+    this.peer = peer;
   }
 
   // The method that implements the backup.
@@ -21,7 +22,10 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       FileChunk currentChunk = this.chunker.nextChunk();
 
       while (currentChunk != null) {
-          //TODO:Call subprotocol with chunk...
+
+          this.backupSubprotocol = new BackupSubprotocol(this.peer, currentChunk, repDeg);
+          this.backupSubprotocol.putchunk();
+
           currentChunk = this.chunker.nextChunk();
       }
       return true;
