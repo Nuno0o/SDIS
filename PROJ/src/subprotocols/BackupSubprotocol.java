@@ -1,4 +1,4 @@
-package subprotocol;
+package subprotocols;
 
 import services.Peer;
 import services.Message;
@@ -13,29 +13,29 @@ import java.io.IOException;
 
 public class BackupSubprotocol{
 
-    public MCchannel MC;
-    public MDBchannel MDB;
+	public Peer peer;
     public FileChunk chunk;
     public int repDeg;
-    public int peerNumber;
 
     public BackupSubprotocol (Peer peer, FileChunk chunk, int repDeg){
-
-        this.MC = peer.MC;
-        this.MDB = peer.MDB;
+    	this.peer = peer;
 
         this.chunk = chunk;
         this.repDeg = repDeg;
-        this.peerNumber = peer.peerNumber;
 
     }
 
     public void putchunk(){
+    	int tries = 5;
+    	
+    	while(tries > 0){
+    		
+    	
 
         String data = new String(chunk.data);
         Message m = new Message();
 
-        String msg = m.putchunkMsg( this.peerNumber,
+        String msg = m.putchunkMsg( this.peer.peerNumber,
                                     chunk.fileId,
                                     chunk.chunkNo,
                                     this.repDeg,
@@ -45,11 +45,11 @@ public class BackupSubprotocol{
 
         DatagramPacket packet = new DatagramPacket( msg.getBytes(),
                                                     msg.getBytes().length,
-                                                    this.MDB.peer.mcastMC,
-                                                    this.MDB.peer.portMC);
+                                                    this.peer.mcastMC,
+                                                    this.peer.portMC);
 
         try {
-            this.MDB.msocket.send(packet);
+            this.peer.MDB.msocket.send(packet);
         } catch (IOException e){
             System.err.println("BackupSubprotocol Exception. Couldn't send packet. " + e.toString());
             e.printStackTrace();
@@ -59,13 +59,39 @@ public class BackupSubprotocol{
 
         try {
             Thread.sleep(threadDelay);
+            this.peer.MC.msocket.setSoTimeout(1000);
         } catch (Exception e) {
             System.err.println("Thread Sleep exception: " + e.toString());
             e.printStackTrace();
         }
 
         // TODO: get STORED messages
-
+        
+        int storedReceived = 0;
+        
+        while(storedReceived < this.repDeg){
+        	
+        
+        try{
+			this.peer.MC.msocket.receive(this.peer.MC.packet);
+		}catch(Exception e){
+			System.out.println("Didn't receive enough confirmations");
+			break;
+		}
+        
+        
+        String packetData = new String(this.peer.MC.packet.getData());
+		String[] splitStr = packetData.split("\\s+");
+		
+			if(/*versao etc*/splitStr[0] == "STORED" && Integer.parseInt(splitStr[2]) != this.peer.peerNumber && splitStr[3] == this.chunk.fileId && Integer.parseInt(splitStr[4]) == this.chunk.chunkNo){
+				storedReceived++;
+			}
+		
+    		}
+    	if(storedReceived < this.repDeg){
+    		tries--;
+    		continue;
+    	}else break;
+    	}
     }
-
 }
