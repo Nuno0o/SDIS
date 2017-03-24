@@ -24,14 +24,19 @@ public class MDBchannel extends Channel {
 		while(true){
 			//Receive UDP datagram, continue if failed
 			try{
+				System.out.println("Here");
 				this.msocket.receive(this.packet);
-
 				String packetData = new String(this.packet.getData(), 0, this.packet.getLength());
+
+				System.out.println(packetData);
 
 				// handle STORED packet
 				PacketManager p = new PacketManager(this.peer);
 				if (p.handlePacket(packetData)){
 					// TODO: handler: write chunk to a file
+
+					
+
 				}
 
 			}catch(Exception e){
