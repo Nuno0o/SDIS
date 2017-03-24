@@ -18,7 +18,7 @@ public class FileChunk {
 		MessageDigest md;
 		try{
 			md = MessageDigest.getInstance("SHA-256");
-			md.update(data);
+			md.update(filename.getBytes());
 			this.fileId = md.digest().toString();
 		}catch(Exception e){
 
