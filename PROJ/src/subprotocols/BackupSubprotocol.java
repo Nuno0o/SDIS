@@ -32,12 +32,12 @@ public class BackupSubprotocol{
         int tries = Constants.MAX_TRIES;
         while(tries > Constants.ZERO_TRIES){
 
-            String data = new String(chunk.data);
+            String data = new String(this.chunk.data);
             Message m = new Message();
 
             String msg = m.putchunkMsg( this.peer.peerNumber,
-                                        chunk.fileId,
-                                        chunk.chunkNo,
+                                        this.chunk.fileId,
+                                        this.chunk.chunkNo,
                                         this.repDeg,
                                         data);
 
@@ -45,8 +45,8 @@ public class BackupSubprotocol{
 
             DatagramPacket packet = new DatagramPacket( msg.getBytes(),
             msg.getBytes().length,
-            this.peer.mcastMC,
-            this.peer.portMC);
+            this.peer.mcastMDB,
+            this.peer.portMDB);
 
             try {
                 this.peer.MDB.msocket.send(packet);

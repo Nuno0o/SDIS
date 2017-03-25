@@ -26,7 +26,6 @@ public class MDBchannel extends Channel {
 			try{
 				this.msocket.receive(this.packet);
 				String packetData = new String(this.packet.getData(), 0, this.packet.getLength());
-				// handle STORED packet
 				PacketManager p = new PacketManager(this.peer);
 				if (!p.handlePacket(packetData)){
 					System.err.println("Error handling packet");
@@ -36,11 +35,6 @@ public class MDBchannel extends Channel {
 				System.out.println("Error receiving packet on MC");
 				continue;
 			}
-			//Parse packet
-			String packetData = new String(this.packet.getData());
-			this.packetmanager.handlePacket(packetData);
-
-
 		}
 	}
 }

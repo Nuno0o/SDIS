@@ -34,8 +34,13 @@ public class PacketManager {
 			return false;
 		}
 
+		if (splitStr[0].equals("DELETE")){
+			if (handleDelete(splitStr)){
+				return true;
+			}
+			return false;
+		}
 		return false;
-
 	}
 
 	public boolean handlePutChunk(String[] splitStr){
@@ -79,6 +84,20 @@ public class PacketManager {
 	}
 
 	public boolean sendChunkResp(String[] splitStr){
+
+		return true;
+	}
+
+	public boolean handleDelete(String[] splitStr){
+
+		if(!splitStr[1].equals(this.peer.protocol_version)){
+			return false;
+		}
+		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
+			return false;
+		}
+
+		this.peer.deleteChunk(splitStr[3]);
 
 		return true;
 	}

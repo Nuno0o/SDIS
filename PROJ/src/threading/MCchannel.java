@@ -1,6 +1,7 @@
 package threading;
 
 import services.Peer;
+import services.PacketManager;
 import java.net.*;
 
 public class MCchannel extends Channel {
@@ -24,16 +25,16 @@ public class MCchannel extends Channel {
 			//Receive UDP datagram, continue if failed
 			try{
 				this.msocket.receive(this.packet);
+				String packetData = new String(this.packet.getData(), 0, this.packet.getLength());
+				PacketManager p = new PacketManager(this.peer);
+				if (!p.handlePacket(packetData)){
+					System.err.println("Error handling packet");
+				}
+
 			}catch(Exception e){
 				System.out.println("Error receiving packet on MC");
 				continue;
 			}
-			//Parse packet
-			String packetData = new String(this.packet.getData());
-			String[] splitStr = packetData.split("\\s+");
-
-
-
 		}
 	}
 
