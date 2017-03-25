@@ -21,7 +21,7 @@ public class WriteFile {
         try{
             this.fw = new FileWriter(splitStr[3] + "::" + splitStr[4]);
             this.bw = new BufferedWriter(fw);
-            this.bw.write(/*data*/);
+            this.bw.write(/*data*/"");
         }  catch(IOException e) {
             System.err.println("Error storing chunk: " + e.toString());
             e.printStackTrace();
