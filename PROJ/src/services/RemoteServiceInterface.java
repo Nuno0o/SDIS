@@ -11,7 +11,7 @@ public interface RemoteServiceInterface extends Remote{
     //public void restore();
 
     // The delete execution method
-    //public void delete();
+    //public void delete(String path);
 
     // The reclaim execution method
     //public void reclaim();

@@ -14,8 +14,11 @@ public class Chunker {
 	//How much has been read
 	int chunkRead;
 
-	public Chunker(String path){
+	int repDeg;
+
+	public Chunker(String path, int repDeg){
 		try{
+			this.repDeg = repDeg;
 			this.file = new File(path);
 			this.in = new FileInputStream(this.file);
 			this.out = new FileOutputStream(this.file);
@@ -40,7 +43,7 @@ public class Chunker {
 			return null;
 		}
 		//Create chunk
-		FileChunk chunk = new FileChunk(file.getName() + ":" + System.currentTimeMillis(),data,this.chunkNo);
+		FileChunk chunk = new FileChunk(file.getName() + ":" + System.currentTimeMillis(),data,this.chunkNo,this.repDeg);
 		//Increment chunk counter
 		chunkNo++;
 		//Increment length read

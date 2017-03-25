@@ -19,7 +19,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
   // The method that implements the backup.
   public void backup(String path, int repDeg){
-      this.chunker = new Chunker(path);
+      this.chunker = new Chunker(path,repDeg);
 
       FileChunk currentChunk = this.chunker.nextChunk();
 
@@ -31,5 +31,10 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
           currentChunk = this.chunker.nextChunk();
       }
   }
+
+  // The method that implements the deleting of chunks.
+  /*public void delete(String path) {
+
+  }*/
 
 }

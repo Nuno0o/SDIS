@@ -4,11 +4,13 @@ import threading.Channel;
 import threading.MCchannel;
 import threading.MDBchannel;
 import threading.MDRchannel;
+import fileManagement.FileChunk;
 import java.net.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
+import java.util.HashSet;
 
 public class Peer {
 
@@ -32,11 +34,14 @@ public class Peer {
 	public MDBchannel MDB;
 	public MDRchannel MDR;
 
+	public HashSet<FileChunk> storage;
+
 	public Peer(String[] args){
 		//Init peer information
 		this.protocol_version = args[0];
 		this.peerNumber = Integer.parseInt(args[1]);
 		this.remote_name = args[2];
+		this.storage = new HashSet<FileChunk>();
 		//Set multicast channels ips and ports
 		try{
 			this.mcastMC = InetAddress.getByName(args[3]);
@@ -76,6 +81,11 @@ public class Peer {
 			e.printStackTrace();
 		}
 
+	}
+
+	public boolean storeChunk(FileChunk chunk){
+		if (!storage.add(chunk)) return false;
+		return true;
 	}
 
 }

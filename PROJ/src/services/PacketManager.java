@@ -1,21 +1,25 @@
 package services;
 
-import fileManagement.WriteFile;
+import fileManagement.FileChunk;
+import utilities.Constants;
 import java.net.DatagramPacket;
 
 public class PacketManager {
 	public Peer peer;
-	public WriteFile writeFile;
 
 	public PacketManager(Peer peer){
 		this.peer = peer;
-		this.writeFile = new WriteFile();
 	}
 	public boolean handlePacket(String packet){
 		String[] splitStr = packet.split("\\s+");
 		if (splitStr[0].equals("PUTCHUNK")) {
 			if(handlePutChunk(splitStr)){
-				writeFile.storeChunk(packet);
+
+				String[] splitStr2 = packet.split(Constants.CRLF);
+				FileChunk chunk = new FileChunk(splitStr[3], splitStr2[splitStr2.length - 1].getBytes(), Integer.parseInt(splitStr[4]), Integer.parseInt(splitStr[5]), true);
+
+				this.peer.storeChunk(chunk);
+
 				if (!sendStoredChunk(splitStr)) return false;
 				return true;
 			}
