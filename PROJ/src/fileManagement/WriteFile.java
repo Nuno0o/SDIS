@@ -1,5 +1,7 @@
 package fileManagement;
 
+import utilities.Constants;
+
 import java.io.IOException;
 import java.io.Writer;
 import java.io.OutputStreamWriter;
@@ -12,16 +14,16 @@ public class WriteFile {
     public BufferedWriter bw;
     public FileWriter fw;
 
-    public void storeChunk(String[] splitStr){
-
-        // TODO: get body
+    public void storeChunk(String packet){
+        String[] splitStr = packet.split("\\s+");
+        String[] splitStr2 = packet.split(Constants.CRLF);
 
         // write file
 
         try{
             this.fw = new FileWriter(splitStr[3] + "::" + splitStr[4]);
             this.bw = new BufferedWriter(fw);
-            this.bw.write(/*data*/"");
+            this.bw.write(splitStr2[splitStr2.length - 1]);
         }  catch(IOException e) {
             System.err.println("Error storing chunk: " + e.toString());
             e.printStackTrace();
