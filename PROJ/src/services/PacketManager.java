@@ -1,25 +1,26 @@
 package services;
 
-import fileManagement.FileChunk;
+import fileManagement.WriteFile;
 import utilities.Constants;
+
 import java.net.DatagramPacket;
+import java.io.File;
+import java.io.FilenameFilter;
 
 public class PacketManager {
 	public Peer peer;
+	public WriteFile wf;
 
 	public PacketManager(Peer peer){
 		this.peer = peer;
+		this.wf = new WriteFile();
 	}
 	public boolean handlePacket(String packet){
 		String[] splitStr = packet.split("\\s+");
 		if (splitStr[0].equals("PUTCHUNK")) {
 			if(handlePutChunk(splitStr)){
 
-				String[] splitStr2 = packet.split(Constants.CRLF);
-				FileChunk chunk = new FileChunk(splitStr[3], splitStr2[splitStr2.length - 1].getBytes(), Integer.parseInt(splitStr[4]), Integer.parseInt(splitStr[5]), true);
-
-				this.peer.storeChunk(chunk);
-
+				wf.storeChunk(packet);
 				if (!sendStoredChunk(splitStr)) return false;
 				return true;
 			}
@@ -97,7 +98,19 @@ public class PacketManager {
 			return false;
 		}
 
-		this.peer.deleteChunk(splitStr[3]);
+		final String str = splitStr[3];
+
+		File f = new File(".");
+		File[] matches = f.listFiles(
+			new FilenameFilter(){
+				public boolean accept(File dir, String name){
+					return name.startsWith(str);
+				}
+		});
+
+		for (int i = 0; i < matches.length; i++){
+			matches[i].delete();
+		}
 
 		return true;
 	}

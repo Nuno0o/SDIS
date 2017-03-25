@@ -15,7 +15,7 @@ public class WriteFile {
     public FileWriter fw;
 
     public void storeChunk(String packet){
-        /*String[] splitStr = packet.split("\\s+");
+        String[] splitStr = packet.split("\\s+");
         String[] splitStr2 = packet.split(Constants.CRLF);
 
         // write file
@@ -37,7 +37,7 @@ public class WriteFile {
                 System.err.println("Error closing BW FW: " + e.toString());
                 e.printStackTrace();
             }
-        }*/
+        }
     }
 
 }
