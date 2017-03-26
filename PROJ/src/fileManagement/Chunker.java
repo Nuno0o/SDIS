@@ -2,6 +2,7 @@ package fileManagement;
 
 import utilities.Constants;
 import java.io.*;
+import java.security.MessageDigest;
 
 public class Chunker {
 	//IO file variables
@@ -42,8 +43,18 @@ public class Chunker {
 			System.out.println("Error reading file");
 			return null;
 		}
+		//SHA-256 file id
+		String filename = file.getName() + ":" + System.currentTimeMillis();
+		String fileid = "";
+		MessageDigest md;
+		try{
+			md = MessageDigest.getInstance("SHA-256");
+			md.update(filename.getBytes());
+			fileid = md.digest().toString();
+		}catch(Exception e){
+		}
 		//Create chunk
-		FileChunk chunk = new FileChunk(file.getName() + ":" + System.currentTimeMillis(),data,this.chunkNo,this.repDeg);
+		FileChunk chunk = new FileChunk(fileid,data,this.chunkNo,this.repDeg);
 		//Increment chunk counter
 		chunkNo++;
 		//Increment length read

@@ -11,28 +11,25 @@ import java.io.FileWriter;
 
 public class WriteFile {
 
-    public BufferedWriter bw;
-    public FileWriter fw;
 
-    public void storeChunk(String packet){
-        String[] splitStr = packet.split("\\s+");
-        String[] splitStr2 = packet.split(Constants.CRLF);
-
+    public void storeChunk(FileChunk chunk,String name){
         // write file
-
+    	String data = new String(chunk.data);
+    	FileWriter fw = null;
+    	BufferedWriter bw = null;
         try{
-            this.fw = new FileWriter(splitStr[3] + "::" + splitStr[4]);
-            this.bw = new BufferedWriter(fw);
-            this.bw.write(splitStr2[splitStr2.length - 1]);
+            fw = new FileWriter(name);
+            bw = new BufferedWriter(fw);
+            bw.write(data);
         }  catch(IOException e) {
             System.err.println("Error storing chunk: " + e.toString());
             e.printStackTrace();
         } finally {
             try {
-                if (this.bw != null)
-                    this.bw.close();
-                if (this.fw != null)
-                    this.fw.close();
+                if (bw != null)
+                    bw.close();
+                if (fw != null)
+                    fw.close();
             } catch (IOException e){
                 System.err.println("Error closing BW FW: " + e.toString());
                 e.printStackTrace();

@@ -1,5 +1,6 @@
 package services;
 
+import fileManagement.FileChunk;
 import fileManagement.WriteFile;
 import utilities.Constants;
 
@@ -16,48 +17,48 @@ public class PacketManager {
 		this.wf = new WriteFile();
 	}
 	public boolean handlePacket(String packet){
+		
 		String[] splitStr = packet.split("\\s+");
+		
 		if (splitStr[0].equals("PUTCHUNK")) {
-			if(handlePutChunk(splitStr)){
-
-				wf.storeChunk(packet);
-				if (!sendStoredChunk(splitStr)) return false;
-				return true;
-			}
-			return false;
+			return handlePutChunk(packet);
 		}
 
 		if (splitStr[0].equals("GETCHUNK")){
-			if(handleGetChunk(splitStr)){
-				sendChunkResp(splitStr);
-				return true;
-			}
-			return false;
+			return handleGetChunk(packet);
 		}
 
 		if (splitStr[0].equals("DELETE")){
-			if (handleDelete(splitStr)){
-				return true;
-			}
-			return false;
+			return handleDelete(packet);
 		}
 		return false;
 	}
 
-	public boolean handlePutChunk(String[] splitStr){
+	public boolean handlePutChunk(String packet){
+		String[] splitStr = packet.split("\\s+");
+		String[] splitStr2 = packet.split(Constants.CRLF);
+		
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
 		}
 		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
 			return false;
 		}
+		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
+		
+		String chunkname = "";//generate random chunk name
+		
+		wf.storeChunk(chunk, chunkname);
+		
+		if (!sendStoredChunk(chunk)) return false;
+		
 		return true;
 	}
 
-	public boolean sendStoredChunk(String[] splitStr){
+	public boolean sendStoredChunk(FileChunk chunk){
 		Message m = new Message();
 
-		String stored = m.storedMsg(this.peer.peerNumber, splitStr[3], Integer.parseInt(splitStr[4]));
+		String stored = m.storedMsg(this.peer.peerNumber, chunk.fileId, chunk.chunkNo);
 
 		DatagramPacket packet = new DatagramPacket( stored.getBytes(),
 	            stored.getBytes().length,
@@ -72,25 +73,21 @@ public class PacketManager {
 		return true;
 	}
 
-	public boolean handleGetChunk(String[] splitStr){
+	public boolean handleGetChunk(String packet){
+		String[] splitStr = packet.split("\\s+");
 		if(splitStr[1] != this.peer.protocol_version){
 			return false;
 		}
 		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
 			return false;
 		}
-
 		//TODO: Check if file exists return true if so else false
 		return true;
 	}
-
-	public boolean sendChunkResp(String[] splitStr){
-
-		return true;
-	}
-
-	public boolean handleDelete(String[] splitStr){
-
+	
+	public boolean handleDelete(String packet){
+		//mudar para consultar em chunksstored.java em vez de percorrer ficheiros
+		/*
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
 		}
@@ -111,7 +108,7 @@ public class PacketManager {
 		for (int i = 0; i < matches.length; i++){
 			matches[i].delete();
 		}
-
+		 */
 		return true;
 	}
 }
