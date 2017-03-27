@@ -7,8 +7,7 @@ import java.security.MessageDigest;
 public class Chunker {
 	//IO file variables
 	File file;
-	FileInputStream in = null;
-	FileOutputStream out = null;
+	BufferedReader br;
 
 	//Chunk number
 	int chunkNo;
@@ -21,8 +20,7 @@ public class Chunker {
 		try{
 			this.repDeg = repDeg;
 			this.file = new File(path);
-			this.in = new FileInputStream(this.file);
-			this.out = new FileOutputStream(this.file);
+			this.br = new BufferedReader(new FileReader(path));
 		}catch(Exception e){
 			System.err.println("Can't open file.");
 		}
@@ -33,12 +31,12 @@ public class Chunker {
 
 	public FileChunk nextChunk(){
 		//Data array
-		byte[] data = new byte[Constants.MAX_BODY_SIZE];
+		char[] data = new char[Constants.MAX_BODY_SIZE];
 		//Length read from file
 		int length;
 		//Read data from file
 		try{
-			length = this.in.read(data,chunkRead,Constants.MAX_BODY_SIZE);
+			length = this.br.read(data,chunkRead,Constants.MAX_BODY_SIZE);
 		}catch(Exception e){
 			System.out.println("Error reading file");
 			return null;
@@ -60,7 +58,8 @@ public class Chunker {
 		}catch(Exception e){
 		}
 		//Create chunk
-		FileChunk chunk = new FileChunk(fileid,data,this.chunkNo,this.repDeg);
+		
+		FileChunk chunk = new FileChunk(fileid,new String(data).getBytes(),this.chunkNo,this.repDeg);
 		//Increment chunk counter
 		chunkNo++;
 		//Increment length read
