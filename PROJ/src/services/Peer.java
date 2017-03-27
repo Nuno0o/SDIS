@@ -6,6 +6,7 @@ import threading.MDBchannel;
 import threading.MDRchannel;
 import fileManagement.FileChunk;
 import java.net.*;
+import java.rmi.AlreadyBoundException;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -68,8 +69,13 @@ public class Peer {
 
 			RemoteService remoteService = new RemoteService(this);
 
-			Registry registry = LocateRegistry.getRegistry();
-			registry.bind(this.remote_name, remoteService);
+			try {
+				Registry registry = LocateRegistry.getRegistry();
+				registry.bind(this.remote_name, remoteService);
+			} catch (AlreadyBoundException e) {
+				System.err.println("Already bound: " + e.toString());
+			}
+
 			System.out.println("Remote Object Created");
 
 		} catch (Exception e){

@@ -29,10 +29,16 @@ public class BackupSubprotocol{
 
     public void putchunk(){
 
+        System.out.println("Started PutChunk");
+
         int tries = Constants.MAX_TRIES;
         while(tries > Constants.ZERO_TRIES){
 
+            System.out.println("Tries > Constants.ZERO_TRIES");
+
             String data = new String(this.chunk.data);
+
+            System.out.println("Data:" + data);
             Message m = new Message();
 
             String msg = m.putchunkMsg( this.peer.peerNumber,
@@ -41,6 +47,8 @@ public class BackupSubprotocol{
                                         this.repDeg,
                                         data);
 
+            System.out.println("BUILT PUTCHUNK MSG: " + msg);
+
             // write putchunk
 
             DatagramPacket packet = new DatagramPacket( msg.getBytes(),
@@ -48,14 +56,21 @@ public class BackupSubprotocol{
             this.peer.mcastMDB,
             this.peer.portMDB);
 
+            System.out.println("WILL ATTEMPT TO SEND MSG");
+
             try {
                 this.peer.MDB.msocket.send(packet);
+                System.out.println("SENT MDB MSG");
             } catch (IOException e){
                 System.err.println("BackupSubprotocol Exception. Couldn't send packet. " + e.toString());
                 e.printStackTrace();
             }
 
+            System.out.println("TRYING TO SLEEP");
+
             int threadDelay = new RandomDelay().getRandomDelay();
+
+            System.out.println(threadDelay);
 
             try {
                 Thread.sleep(threadDelay);
@@ -69,10 +84,15 @@ public class BackupSubprotocol{
 
             HashSet<Integer> peersResponded = new HashSet<Integer>();
 
+            System.out.println("SLEPT");
+
             while(storedReceived < this.repDeg){
+
+                System.out.println("STOREDRECEIVED < THISREPDEG");
 
                 try{
                     this.peer.MC.msocket.receive(this.peer.MC.packet);
+                    System.out.println("RECEIVED MC");
                 }catch(Exception e){
                     System.out.println("Didn't receive enough confirmations");
                     break;
@@ -87,7 +107,7 @@ public class BackupSubprotocol{
                     splitStr[3] == this.chunk.fileId &&
                     Integer.parseInt(splitStr[4]) == this.chunk.chunkNo)
                 {
-
+                    System.out.println("TODO");
                     //TODO: check if this works...
                     if (!peersResponded.contains(new Integer(splitStr[2]))){
                         peersResponded.add(new Integer(splitStr[2]));

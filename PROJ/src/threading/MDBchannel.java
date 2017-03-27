@@ -27,7 +27,7 @@ public class MDBchannel extends Channel {
 				this.msocket.receive(this.packet);
 				String packetData = new String(this.packet.getData(), 0, this.packet.getLength());
 				if (!packetmanager.handlePacket(packetData)){
-					System.err.println("Error handling packet");
+					System.err.println("Error handling packet on MDB");
 				}
 
 			}catch(Exception e){

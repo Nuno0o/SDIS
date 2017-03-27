@@ -21,15 +21,20 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
   // The method that implements the backup.
   public void backup(String path, int repDeg){
+
+      System.out.println("I've been summoned");
+
       this.chunker = new Chunker(path,repDeg);
 
       FileChunk currentChunk = this.chunker.nextChunk();
 
       while (currentChunk != null) {
 
+          System.out.println("Im here");
+
           this.backupSubprotocol = new BackupSubprotocol(this.peer, currentChunk, repDeg);
           this.backupSubprotocol.putchunk();
-
+          
           currentChunk = this.chunker.nextChunk();
       }
   }

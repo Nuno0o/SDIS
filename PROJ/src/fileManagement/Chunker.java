@@ -38,7 +38,7 @@ public class Chunker {
 		int length;
 		//Read data from file
 		try{
-			length = in.read(data,chunkRead,Constants.MAX_BODY_SIZE);
+			length = this.in.read(data,chunkRead,Constants.MAX_BODY_SIZE);
 		}catch(Exception e){
 			System.out.println("Error reading file");
 			return null;
@@ -50,7 +50,13 @@ public class Chunker {
 		try{
 			md = MessageDigest.getInstance("SHA-256");
 			md.update(filename.getBytes());
-			fileid = md.digest().toString();
+			byte[] fileIdBytes = md.digest();
+			StringBuilder b = new StringBuilder();
+			for (int i = 0; i < fileIdBytes.length; i++){
+				b.append(String.format("%02X", fileIdBytes[i]));
+			}
+			fileid = b.toString();
+
 		}catch(Exception e){
 		}
 		//Create chunk

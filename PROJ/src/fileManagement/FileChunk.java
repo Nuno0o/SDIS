@@ -17,6 +17,6 @@ public class FileChunk {
 		//File id
 		this.fileId = fileid;
 	}
-	
-	
+
+
 }

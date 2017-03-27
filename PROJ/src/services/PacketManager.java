@@ -17,9 +17,11 @@ public class PacketManager {
 		this.wf = new WriteFile();
 	}
 	public boolean handlePacket(String packet){
-		
+
+		System.out.println(packet);
+
 		String[] splitStr = packet.split("\\s+");
-		
+
 		if (splitStr[0].equals("PUTCHUNK")) {
 			return handlePutChunk(packet);
 		}
@@ -31,13 +33,14 @@ public class PacketManager {
 		if (splitStr[0].equals("DELETE")){
 			return handleDelete(packet);
 		}
+		System.out.println("Reached");
 		return false;
 	}
 
 	public boolean handlePutChunk(String packet){
 		String[] splitStr = packet.split("\\s+");
 		String[] splitStr2 = packet.split(Constants.CRLF);
-		
+
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
 		}
@@ -45,13 +48,13 @@ public class PacketManager {
 			return false;
 		}
 		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
-		
-		String chunkname = "";//generate random chunk name
-		
+
+		String chunkname = chunk.fileId; //TODO:generate random chunk name
+
 		wf.storeChunk(chunk, chunkname);
-		
+
 		if (!sendStoredChunk(chunk)) return false;
-		
+
 		return true;
 	}
 
@@ -67,7 +70,7 @@ public class PacketManager {
 		try{
 			this.peer.MC.msocket.send(packet);
 		}catch(Exception e){
-			System.out.println("Error sending stored msg");
+				System.out.println("Error sending stored msg");
 		}
 
 		return true;
@@ -84,7 +87,7 @@ public class PacketManager {
 		//TODO: Check if file exists return true if so else false
 		return true;
 	}
-	
+
 	public boolean handleDelete(String packet){
 		//mudar para consultar em chunksstored.java em vez de percorrer ficheiros
 		/*

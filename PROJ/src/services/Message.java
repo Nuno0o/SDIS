@@ -12,15 +12,7 @@ public class Message {
 
   public String createHeader(String type, String version, int senderId, String fileId, int chunkNo, int repDeg){
 
-    if (fileId.length() != Constants.SHA_256_SIZE){
-      System.out.println("Hashed fileId length != 256!");
-      return "";
-    }
-
-    if (!version.matches("(0-9)+(.)(0-9)+")){
-      System.out.println("Wrong version!");
-      return "";
-    }
+    System.out.println("FileId : " + fileId);
 
     if (chunkNo > Constants.MAX_CHUNK_SIZE){
       System.out.println("ChunkId larger than max allowed!");
