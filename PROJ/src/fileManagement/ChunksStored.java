@@ -59,11 +59,11 @@ public class ChunksStored {
 			
 		}
 	}
-	public static void addNew(FileChunk chunk,String filename){
+	public static void addNew(FileChunk chunk){
 		ChunkInfo info = new ChunkInfo();
 		info.fileid = chunk.fileId;
 		info.chunkNo = chunk.chunkNo;
-		info.filehash = filename;
+		info.filehash = chunk.fileId + ":" + chunk.chunkNo;
 		info.RepDegree = chunk.repDeg;
 		info.realRepDegree = 1;//if this peer contains the file, then the realrepdegree starts at 1, increments each time a store message is received
 		list.add(info);
