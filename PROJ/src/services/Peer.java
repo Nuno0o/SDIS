@@ -5,6 +5,8 @@ import threading.MCchannel;
 import threading.MDBchannel;
 import threading.MDRchannel;
 import fileManagement.FileChunk;
+import subprotocols.BackupSubprotocol;
+
 import java.net.*;
 import java.rmi.AlreadyBoundException;
 import java.rmi.server.UnicastRemoteObject;
@@ -33,7 +35,7 @@ public class Peer {
 	public MCchannel MC;
 	public MDBchannel MDB;
 	public MDRchannel MDR;
-
+	
 	public Peer(String[] args){
 		//Init peer information
 		this.protocol_version = args[0];

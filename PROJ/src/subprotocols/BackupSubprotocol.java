@@ -13,13 +13,15 @@ import java.util.HashSet;
 import java.net.MulticastSocket;
 import java.net.DatagramPacket;
 
-public class BackupSubprotocol{
+public class BackupSubprotocol extends Thread{
 
     public Peer peer;
     public FileChunk chunk;
     public int repDeg;
 
     public BackupSubprotocol (Peer peer, FileChunk chunk, int repDeg){
+    	super(chunk.fileId+":"+chunk.chunkNo);
+    	
         this.peer = peer;
 
         this.chunk = chunk;
@@ -27,7 +29,7 @@ public class BackupSubprotocol{
 
     }
 
-    public void putchunk(){
+    public void run(){
 
         int tries = Constants.MAX_TRIES;
         while(tries > Constants.ZERO_TRIES){
@@ -60,7 +62,7 @@ public class BackupSubprotocol{
             int threadDelay = new RandomDelay().getRandomDelay();
 
             System.out.println(threadDelay);
-
+            
             try {
                 Thread.sleep(threadDelay);
                 this.peer.MC.msocket.setSoTimeout(Constants.ONE_SECOND);
@@ -91,7 +93,7 @@ public class BackupSubprotocol{
                 String[] splitStr = packetData.split("\\s+");
 
                 if(  /*versao etc*/
-                    splitStr[0] == "STORED" &&
+                    splitStr[0] == "STORED" && splitStr[1] == this.peer.protocol_version &&
                     Integer.parseInt(splitStr[2]) != this.peer.peerNumber &&
                     splitStr[3] == this.chunk.fileId &&
                     Integer.parseInt(splitStr[4]) == this.chunk.chunkNo)

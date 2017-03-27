@@ -5,6 +5,7 @@ import fileManagement.WriteFile;
 import utilities.Constants;
 
 import java.net.DatagramPacket;
+import java.util.Set;
 import java.io.File;
 import java.io.FilenameFilter;
 
@@ -61,7 +62,21 @@ public class PacketManager {
 		wf.storeChunk(chunk, chunkname);
 
 		if (!sendStoredChunk(chunk)) return false;
-
+		return true;
+	}
+	
+	public boolean handleStored(String packet){
+		String[] splitStr = packet.split("\\s+");
+		
+		if(!splitStr[1].equals(this.peer.protocol_version)){
+			System.out.println("Version Mismatch: " + splitStr[1] + " != " + this.peer.protocol_version);
+			return false;
+		}
+		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
+			System.out.println("Peer Mismatch");
+			return false;
+		}
+		
 		return true;
 	}
 
@@ -92,10 +107,6 @@ public class PacketManager {
 			return false;
 		}
 		//TODO: Check if file exists return true if so else false
-		return true;
-	}
-
-	public boolean handleStored(String packet){
 		return true;
 	}
 

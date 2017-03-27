@@ -33,7 +33,7 @@ public class ChunksStored {
 			FileReader reader = new FileReader(filename);
 			BufferedReader bufreader = new BufferedReader(reader);
 			while((line = bufreader.readLine()) != null){
-				String[] splitline = line.split(":");
+				String[] splitline = line.split(";");
 				ChunkInfo chunk = new ChunkInfo();
 				chunk.fileid = splitline[0];
 				chunk.chunkNo = Integer.parseInt(splitline[1]);
@@ -53,13 +53,14 @@ public class ChunksStored {
 		try{
 			PrintWriter pw = new PrintWriter(new FileWriter(filename));
 			for(int i = 0;i < list.size();i++){
-				pw.println(list.get(i).fileid + ":" + list.get(i).chunkNo + ":" + list.get(i).filehash + ":" + list.get(i).RepDegree + ":" + list.get(i).realRepDegree);
+				pw.println(list.get(i).fileid + ";" + list.get(i).chunkNo + ";" + list.get(i).filehash + ";" + list.get(i).RepDegree + ";" + list.get(i).realRepDegree);
 			}
 		}catch(Exception e){
 			
 		}
 	}
 	public static void addNew(FileChunk chunk){
+		load();
 		ChunkInfo info = new ChunkInfo();
 		info.fileid = chunk.fileId;
 		info.chunkNo = chunk.chunkNo;

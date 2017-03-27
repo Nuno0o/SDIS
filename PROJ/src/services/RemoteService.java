@@ -33,7 +33,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
           System.out.println("Im here");
 
           this.backupSubprotocol = new BackupSubprotocol(this.peer, currentChunk, repDeg);
-          this.backupSubprotocol.putchunk();
+          this.backupSubprotocol.start();
           
           currentChunk = this.chunker.nextChunk();
       }
