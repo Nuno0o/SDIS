@@ -29,12 +29,8 @@ public class BackupSubprotocol{
 
     public void putchunk(){
 
-        System.out.println("Started PutChunk");
-
         int tries = Constants.MAX_TRIES;
         while(tries > Constants.ZERO_TRIES){
-
-            System.out.println("Tries > Constants.ZERO_TRIES");
 
             String data = new String(this.chunk.data);
 
@@ -47,8 +43,6 @@ public class BackupSubprotocol{
                                         this.repDeg,
                                         data);
 
-            System.out.println("BUILT PUTCHUNK MSG: " + msg);
-
             // write putchunk
 
             DatagramPacket packet = new DatagramPacket( msg.getBytes(),
@@ -56,17 +50,12 @@ public class BackupSubprotocol{
             this.peer.mcastMDB,
             this.peer.portMDB);
 
-            System.out.println("WILL ATTEMPT TO SEND MSG");
-
             try {
                 this.peer.MDB.msocket.send(packet);
-                System.out.println("SENT MDB MSG");
             } catch (IOException e){
                 System.err.println("BackupSubprotocol Exception. Couldn't send packet. " + e.toString());
                 e.printStackTrace();
             }
-
-            System.out.println("TRYING TO SLEEP");
 
             int threadDelay = new RandomDelay().getRandomDelay();
 

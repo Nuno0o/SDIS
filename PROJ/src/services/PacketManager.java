@@ -18,7 +18,7 @@ public class PacketManager {
 	}
 	public boolean handlePacket(String packet){
 
-		System.out.println(packet);
+		System.out.println("Packet: " + packet);
 
 		String[] splitStr = packet.split("\\s+");
 
@@ -33,6 +33,11 @@ public class PacketManager {
 		if (splitStr[0].equals("DELETE")){
 			return handleDelete(packet);
 		}
+
+		if (splitStr[0].equals("STORED")){
+			return handleStored(packet);
+		}
+
 		System.out.println("Reached");
 		return false;
 	}
@@ -42,14 +47,16 @@ public class PacketManager {
 		String[] splitStr2 = packet.split(Constants.CRLF);
 
 		if(!splitStr[1].equals(this.peer.protocol_version)){
+			System.out.println("Version Mismatch: " + splitStr[1] + " != " + this.peer.protocol_version);
 			return false;
 		}
 		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
+			System.out.println("Peer Mismatch");
 			return false;
 		}
 		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
 
-		String chunkname = chunk.fileId; //TODO:generate random chunk name
+		String chunkname = chunk.fileId+":"+chunk.chunkNo; //TODO:generate random chunk name
 
 		wf.storeChunk(chunk, chunkname);
 
@@ -85,6 +92,10 @@ public class PacketManager {
 			return false;
 		}
 		//TODO: Check if file exists return true if so else false
+		return true;
+	}
+
+	public boolean handleStored(String packet){
 		return true;
 	}
 
