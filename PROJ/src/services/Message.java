@@ -12,8 +12,6 @@ public class Message {
 
   public String createHeader(String type, String version, int senderId, String fileId, int chunkNo, int repDeg){
 
-    System.out.println("FileId : " + fileId);
-
     if (chunkNo > Constants.MAX_CHUNK_SIZE){
       System.out.println("ChunkId larger than max allowed!");
       return "";

@@ -4,6 +4,7 @@ import fileManagement.Chunker;
 import fileManagement.FileChunk;
 import subprotocols.BackupSubprotocol;
 import subprotocols.DeleteSubprotocol;
+import utilities.Constants;
 
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
@@ -33,10 +34,16 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
           System.out.println("Im here");
 
           this.backupSubprotocol = new BackupSubprotocol(this.peer, currentChunk, repDeg);
+
           this.backupSubprotocol.start();
-          
+
+          if(currentChunk.data.length < Constants.MAX_BODY_SIZE)
+            break;
+
           currentChunk = this.chunker.nextChunk();
+
       }
+      this.chunker.close();
   }
 
   // The method that implements the deleting of chunks.

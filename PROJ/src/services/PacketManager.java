@@ -19,8 +19,6 @@ public class PacketManager {
 	}
 	public boolean handlePacket(String packet){
 
-		System.out.println("Packet: " + packet);
-
 		String[] splitStr = packet.split("\\s+");
 
 		if (splitStr[0].equals("PUTCHUNK")) {
@@ -64,10 +62,10 @@ public class PacketManager {
 		if (!sendStoredChunk(chunk)) return false;
 		return true;
 	}
-	
+
 	public boolean handleStored(String packet){
 		String[] splitStr = packet.split("\\s+");
-		
+
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			System.out.println("Version Mismatch: " + splitStr[1] + " != " + this.peer.protocol_version);
 			return false;
@@ -76,7 +74,7 @@ public class PacketManager {
 			System.out.println("Peer Mismatch");
 			return false;
 		}
-		
+
 		return true;
 	}
 

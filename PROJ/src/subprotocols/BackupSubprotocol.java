@@ -21,7 +21,7 @@ public class BackupSubprotocol extends Thread{
 
     public BackupSubprotocol (Peer peer, FileChunk chunk, int repDeg){
     	super(chunk.fileId+":"+chunk.chunkNo);
-    	
+
         this.peer = peer;
 
         this.chunk = chunk;
@@ -35,8 +35,6 @@ public class BackupSubprotocol extends Thread{
         while(tries > Constants.ZERO_TRIES){
 
             String data = new String(this.chunk.data);
-
-            System.out.println("Data:" + data);
             Message m = new Message();
 
             String msg = m.putchunkMsg( this.peer.peerNumber,
@@ -62,7 +60,7 @@ public class BackupSubprotocol extends Thread{
             int threadDelay = new RandomDelay().getRandomDelay();
 
             System.out.println(threadDelay);
-            
+
             try {
                 Thread.sleep(threadDelay);
                 this.peer.MC.msocket.setSoTimeout(Constants.ONE_SECOND);
