@@ -43,6 +43,18 @@ public class Chunker {
 		this.chunkNo = 0;
 		this.chunkRead = 0;
 	}
+
+	public void saveMetaData(){
+		BufferedWriter metad;
+		try{
+			metad = new BufferedWriter(new FileWriter("metadata.txt",true));
+			String metadata = this.path + ":" + this.fileid + ":" + new File(path).length() + ":" + 0;
+			metad.write(metadata,0,metadata.length());
+			metad.close();
+		}catch(Exception e){
+
+		}
+	}
 	public void close(){
 		try{
 			this.br.close();
@@ -74,7 +86,6 @@ public class Chunker {
 		}
 
 		//Create chunk
-
 		FileChunk chunk = new FileChunk(fileid,new String(data).getBytes(),this.chunkNo,this.repDeg);
 		//Increment chunk counter
 		chunkNo++;

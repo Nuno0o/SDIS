@@ -29,6 +29,8 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
       FileChunk currentChunk = this.chunker.nextChunk();
 
+      chunker.saveMetaData();
+
       while (currentChunk != null) {
 
           System.out.println("Im here");
