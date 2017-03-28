@@ -4,6 +4,7 @@ import services.Peer;
 import services.Message;
 import threading.MCchannel;
 import threading.MDBchannel;
+import fileManagement.ChunksSending;
 import fileManagement.FileChunk;
 import utilities.RandomDelay;
 import utilities.Constants;
@@ -33,6 +34,8 @@ public class BackupSubprotocol extends Thread{
 
         int tries = Constants.MAX_TRIES;
         while(tries > Constants.ZERO_TRIES){
+        	
+        	ChunksSending.add(chunk);
 
             String data = new String(this.chunk.data);
             Message m = new Message();
@@ -44,7 +47,6 @@ public class BackupSubprotocol extends Thread{
                                         data);
 
             // write putchunk
-
             DatagramPacket packet = new DatagramPacket( msg.getBytes(),
             msg.getBytes().length,
             this.peer.mcastMDB,
@@ -56,59 +58,18 @@ public class BackupSubprotocol extends Thread{
                 System.err.println("BackupSubprotocol Exception. Couldn't send packet. " + e.toString());
                 e.printStackTrace();
             }
-
-            int threadDelay = new RandomDelay().getRandomDelay();
-
-            System.out.println(threadDelay);
-
-            try {
-                Thread.sleep(threadDelay);
-                this.peer.MC.msocket.setSoTimeout(Constants.ONE_SECOND);
-            } catch (Exception e) {
-                System.err.println("Thread Sleep exception: " + e.toString());
-                e.printStackTrace();
+            
+            try{
+            	Thread.sleep(Constants.ONE_SECOND);
+            }catch(Exception e){
+            	//???
             }
-
-            int storedReceived = 0;
-
-            HashSet<Integer> peersResponded = new HashSet<Integer>();
-
-            System.out.println("SLEPT");
-
-            while(storedReceived < this.repDeg){
-
-                System.out.println("STOREDRECEIVED < THISREPDEG");
-
-                try{
-                    this.peer.MC.msocket.receive(this.peer.MC.packet);
-                    System.out.println("RECEIVED MC");
-                }catch(Exception e){
-                    System.out.println("Didn't receive enough confirmations");
-                    break;
-                }
-
-                String packetData = new String(this.peer.MC.packet.getData());
-                String[] splitStr = packetData.split("\\s+");
-
-                if(  /*versao etc*/
-                    splitStr[0] == "STORED" && splitStr[1] == this.peer.protocol_version &&
-                    Integer.parseInt(splitStr[2]) != this.peer.peerNumber &&
-                    splitStr[3] == this.chunk.fileId &&
-                    Integer.parseInt(splitStr[4]) == this.chunk.chunkNo)
-                {
-                    System.out.println("TODO");
-                    //TODO: check if this works...
-                    if (!peersResponded.contains(new Integer(splitStr[2]))){
-                        peersResponded.add(new Integer(splitStr[2]));
-                        storedReceived++;
-                    }
-                }
-
+            if(ChunksSending.hasEnoughResponses(chunk)){
+            	break;
+            }else{
+            	tries--;
+            	continue;
             }
-            if(storedReceived < this.repDeg){
-                tries--;
-                continue;
-            }else break;
         }
     }
 }
