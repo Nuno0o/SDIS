@@ -65,7 +65,7 @@ public class ChunksStored {
 	public static Boolean addNew(FileChunk chunk){
 		load();
 		for(int i = 0;i < list.size();i++){
-			if(list.get(i).fileid == chunk.fileId && list.get(i).chunkNo == chunk.chunkNo){
+			if(list.get(i).fileid.equals(chunk.fileId) && list.get(i).chunkNo == chunk.chunkNo){
 				return false;
 			}
 		}
@@ -83,7 +83,7 @@ public class ChunksStored {
 	public static boolean incDegree(String fileid,int chunkno){
 		load();
 		for(int i = 0; i < list.size();i++){
-			if(list.get(i).fileid == fileid && list.get(i).chunkNo == chunkno){
+			if(list.get(i).fileid.equals(fileid) && list.get(i).chunkNo == chunkno){
 				list.get(i).realRepDegree++;
 				store();
 				return true;
@@ -96,7 +96,7 @@ public class ChunksStored {
 		load();
 		boolean ret = false;
 		for(int i = 0;i < list.size();i++){
-			if(list.get(i).fileid == fileid){
+			if(list.get(i).fileid.equals(fileid)){
 				try{
 					File f = new File(list.get(i).filehash);
 					f.delete();
