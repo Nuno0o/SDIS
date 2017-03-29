@@ -25,7 +25,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
   // The method that implements the backup.
   public void backup(String path, int repDeg){
 
-      System.out.println("I've been summoned");
+      System.out.println("Backing up file in :" + path);
 
       this.chunker = new Chunker(path,repDeg);
 
@@ -52,37 +52,20 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
   // The method that implements the deleting of chunks.
   public void delete(String path) {
-      /*this.chunker = new Chunker(path, 0);
-
-      FileChunk currentChunk = this.chunker.nextChunk();
-
-      while(currentChunk != null){
-
-          this.deleteSubprotocol = new DeleteSubprotocol(this.peer, currentChunk);
-          this.deleteSubprotocol.delete();
-
-          currentChunk = this.chunker.nextChunk();
-
-      }*/
-
       try {
-          BufferedReader br = new BufferedReader(new FileReader("./metadata.txt"));
-
-          String line;
-          while((line = br.readLine()) != null){
-              String[] metadata = line.split(":");
-              if (metadata[0].equals(path)){
-                  // Find chunk
-                  // Start DeleteSubprotocol
-              }
+          System.out.println("Deleting file in :" + path);
+          
+          String fileid = Chunker.findMetaData(path);
+          
+          if(fileid == null){
+        	  System.out.println("This file hasn't been backed up");
+        	  return;
           }
+          
+          this.deleteSubprotocol = new DeleteSubprotocol(this.peer,fileid);
 
-      } catch(FileNotFoundException e){
-          System.err.println("metadata file not found! Exiting... " + e.toString());
-          e.printStackTrace();
-      } catch(IOException e){
-          System.err.println("IOException at: " + e.toString());
-          e.printStackTrace();
+      } catch(Exception e){
+    	  System.out.println("Couldn't execute delete protocol");
       }
 
   }

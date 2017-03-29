@@ -4,7 +4,7 @@ import java.util.Random;
 
 public class RandomDelay {
 
-    public int getRandomDelay(){
+    public static int getRandomDelay(){
         Random rnd = new Random();
         return rnd.nextInt(Constants.MAX_DELAY);
     }

@@ -1,27 +1,28 @@
 package subprotocols;
 
 import services.Peer;
+import utilities.Constants;
 import services.Message;
 import fileManagement.FileChunk;
 
 import java.io.IOException;
 import java.net.*;
 
-public class DeleteSubprotocol {
+public class DeleteSubprotocol extends Thread {
 
     public Peer peer;
-    public FileChunk chunk;
+    public String fileid;
 
-    public DeleteSubprotocol(Peer peer, FileChunk chunk){
+    public DeleteSubprotocol(Peer peer, String fileid){
         this.peer = peer;
-        this.chunk = chunk;
+        this.fileid = fileid;
     }
 
-    public void delete(){
+    public void run(){
 
         Message m = new Message();
 
-        String msg = m.deleteMsg( this.peer.peerNumber, this.chunk.fileId);
+        String msg = m.deleteMsg( this.peer.peerNumber, this.fileid);
 
         DatagramPacket packet = new DatagramPacket( msg.getBytes(),
         msg.getBytes().length,
@@ -29,8 +30,14 @@ public class DeleteSubprotocol {
         this.peer.portMC);
 
         try {
-            this.peer.MDB.msocket.send(packet);
-        } catch (IOException e){
+        	int NTries = Constants.MAX_TRIES;
+        	while(NTries > 0){
+        		this.peer.MDB.msocket.send(packet);
+        		NTries--;
+        		Thread.sleep(300);
+        	}
+            
+        } catch (Exception e){
             System.err.println("DeleteSubprotocol Exception. Couldn't send packet. " + e.toString());
             e.printStackTrace();
         }

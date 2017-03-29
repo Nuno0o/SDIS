@@ -55,6 +55,23 @@ public class Chunker {
 
 		}
 	}
+	
+	public static String findMetaData(String path){
+		BufferedReader metad;
+		try{
+			metad = new BufferedReader(new FileReader("metadata.txt"));
+			String currLine;
+			while((currLine = metad.readLine()) != null){
+				String[] c = currLine.split(":");
+				if(path.equals(c[0])){
+					return c[1];
+				}
+			}
+		}catch(Exception e){
+			
+		}
+		return null;
+	}
 	public void close(){
 		try{
 			this.br.close();

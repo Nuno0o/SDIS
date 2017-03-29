@@ -5,6 +5,7 @@ import fileManagement.ChunksStored;
 import fileManagement.FileChunk;
 import fileManagement.WriteFile;
 import utilities.Constants;
+import utilities.RandomDelay;
 
 import java.net.DatagramPacket;
 import java.util.Set;
@@ -57,14 +58,21 @@ public class PacketManager {
 			System.out.println("Peer Mismatch");
 			return false;
 		}
+		//Create new chunk out of packet
 		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
-
+		//Chunk name
 		String chunkname = chunk.fileId+":"+chunk.chunkNo;
-
+		//Store chunk in filesystem
 		wf.storeChunk(chunk, chunkname);
-
+		//Add chunk to stored chunks list
 		ChunksStored.addNew(chunk);
-
+		//Sleep between 0 and 400 ms
+		try{
+			Thread.sleep(RandomDelay.getRandomDelay());
+		}catch(Exception e){
+			
+		}
+		//Send stored answer
 		if (!sendStoredChunk(chunk)) return false;
 		return true;
 	}
