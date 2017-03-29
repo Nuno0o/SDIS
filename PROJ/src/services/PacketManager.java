@@ -44,6 +44,8 @@ public class PacketManager {
 	}
 
 	public boolean handlePutChunk(String packet){
+
+		System.out.println("PUTCHUNKK");
 		String[] splitStr = packet.split("\\s+");
 		String[] splitStr2 = packet.split(Constants.CRLF);
 
@@ -57,7 +59,7 @@ public class PacketManager {
 		}
 		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
 
-		String chunkname = chunk.fileId+":"+chunk.chunkNo; //TODO:generate random chunk name
+		String chunkname = chunk.fileId+":"+chunk.chunkNo;
 
 		wf.storeChunk(chunk, chunkname);
 

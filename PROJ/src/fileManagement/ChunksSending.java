@@ -31,7 +31,7 @@ public class ChunksSending {
 
 	public static Boolean incrementResponses(String fileid, int chunkNo){
 		for(int i = 0;i < chunks.size();i++){
-			if(chunks.get(i).c.fileId == fileid && chunks.get(i).c.chunkNo == chunkNo){
+			if(chunks.get(i).c.fileId.equals(fileid) && chunks.get(i).c.chunkNo == chunkNo){
 				chunks.get(i).nConfirmations++;
 				return true;
 			}

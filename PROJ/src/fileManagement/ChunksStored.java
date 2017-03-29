@@ -25,7 +25,7 @@ public class ChunksStored {
 	}
 	//list of chunks stored
 	public static String filename = "storedchunks.txt";
-	public static ArrayList<ChunkInfo> list;
+	public static ArrayList<ChunkInfo> list = new ArrayList<ChunkInfo>();
 	//
 	public static void load(){
 		list.clear();
@@ -46,19 +46,20 @@ public class ChunksStored {
 			}
 			bufreader.close();
 		}catch(Exception e){
-
 		}
 	}
 	public static void store(){
-		String line = null;
+		String line = new String();
 
 		try{
 			PrintWriter pw = new PrintWriter(new FileWriter(filename));
 			for(int i = 0;i < list.size();i++){
+				System.out.println(list.size());
 				pw.println(list.get(i).fileid + ";" + list.get(i).chunkNo + ";" + list.get(i).filehash + ";" + list.get(i).RepDegree + ";" + list.get(i).realRepDegree);
 			}
+			pw.close();
 		}catch(Exception e){
-
+			System.out.println("Error printing store message");
 		}
 	}
 	public static Boolean addNew(FileChunk chunk){
@@ -101,7 +102,7 @@ public class ChunksStored {
 					f.delete();
 					ret = true;
 				}catch(Exception e){
-					
+
 				}
 			}
 		}

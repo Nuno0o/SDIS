@@ -48,7 +48,7 @@ public class Chunker {
 		BufferedWriter metad;
 		try{
 			metad = new BufferedWriter(new FileWriter("metadata.txt",true));
-			String metadata = this.path + ":" + this.fileid + ":" + new File(path).length() + ":" + 0;
+			String metadata = this.path + ":" + this.fileid + ":" + new File(path).length();
 			metad.write(metadata,0,metadata.length());
 			metad.close();
 		}catch(Exception e){
