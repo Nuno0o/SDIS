@@ -34,7 +34,8 @@ public class BackupSubprotocol extends Thread{
 
         int tries = Constants.MAX_TRIES;
         while(tries > Constants.ZERO_TRIES){
-        	
+
+            if (ChunksSending.chunks == null) ChunksSending.init();
         	ChunksSending.add(chunk);
 
             String data = new String(this.chunk.data);
@@ -58,7 +59,7 @@ public class BackupSubprotocol extends Thread{
                 System.err.println("BackupSubprotocol Exception. Couldn't send packet. " + e.toString());
                 e.printStackTrace();
             }
-            
+
             try{
             	Thread.sleep(Constants.ONE_SECOND);
             }catch(Exception e){

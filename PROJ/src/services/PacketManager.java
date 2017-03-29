@@ -60,7 +60,7 @@ public class PacketManager {
 		String chunkname = chunk.fileId+":"+chunk.chunkNo; //TODO:generate random chunk name
 
 		wf.storeChunk(chunk, chunkname);
-		
+
 		ChunksStored.addNew(chunk);
 
 		if (!sendStoredChunk(chunk)) return false;
@@ -78,11 +78,11 @@ public class PacketManager {
 			System.out.println("Peer Mismatch");
 			return false;
 		}
-		
+
 		if(ChunksSending.incrementResponses(splitStr[3],Integer.parseInt(splitStr[4]))){
 			return true;
 		}
-		
+
 		if(ChunksStored.incDegree(splitStr[3],Integer.parseInt(splitStr[4]))){
 			return true;
 		}

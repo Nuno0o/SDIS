@@ -7,6 +7,7 @@ import subprotocols.BackupSubprotocol;
 import subprotocols.DeleteSubprotocol;
 import utilities.Constants;
 
+import java.io.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 
@@ -33,7 +34,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       chunker.saveMetaData();
 
       while (currentChunk != null) {
-    	  
+
           System.out.println("Im here");
 
           this.backupSubprotocol = new BackupSubprotocol(this.peer, currentChunk, repDeg);
@@ -51,7 +52,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
   // The method that implements the deleting of chunks.
   public void delete(String path) {
-      this.chunker = new Chunker(path, 0);
+      /*this.chunker = new Chunker(path, 0);
 
       FileChunk currentChunk = this.chunker.nextChunk();
 
@@ -62,7 +63,28 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
           currentChunk = this.chunker.nextChunk();
 
+      }*/
+
+      try {
+          BufferedReader br = new BufferedReader(new FileReader("./metadata.txt"));
+
+          String line;
+          while((line = br.readLine()) != null){
+              String[] metadata = line.split(":");
+              if (metadata[0].equals(path)){
+                  // Find chunk
+                  // Start DeleteSubprotocol
+              }
+          }
+
+      } catch(FileNotFoundException e){
+          System.err.println("metadata file not found! Exiting... " + e.toString());
+          e.printStackTrace();
+      } catch(IOException e){
+          System.err.println("IOException at: " + e.toString());
+          e.printStackTrace();
       }
+
   }
 
 }
