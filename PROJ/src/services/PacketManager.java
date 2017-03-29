@@ -121,29 +121,13 @@ public class PacketManager {
 	}
 
 	public boolean handleDelete(String packet){
-		//mudar para consultar em chunksstored.java em vez de percorrer ficheiros
-		/*
+		String[] splitStr = packet.split("\\s+");
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
 		}
 		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
 			return false;
 		}
-
-		final String str = splitStr[3];
-
-		File f = new File(".");
-		File[] matches = f.listFiles(
-			new FilenameFilter(){
-				public boolean accept(File dir, String name){
-					return name.startsWith(str);
-				}
-		});
-
-		for (int i = 0; i < matches.length; i++){
-			matches[i].delete();
-		}
-		 */
-		return true;
+		return ChunksStored.deleteFile(splitStr[3]);
 	}
 }

@@ -7,6 +7,8 @@ import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.nio.file.FileSystems;
+import java.nio.file.Files;
 import java.util.ArrayList;
 
 public class ChunksStored {
@@ -76,7 +78,7 @@ public class ChunksStored {
 		store();
 		return true;
 	}
-
+	//Inc replication degree of chunk
 	public static boolean incDegree(String fileid,int chunkno){
 		load();
 		for(int i = 0; i < list.size();i++){
@@ -87,5 +89,23 @@ public class ChunksStored {
 			}
 		}
 		return false;
+	}
+	//Returns true if at least 1 chunk has been deleted
+	public static boolean deleteFile(String fileid){
+		load();
+		boolean ret = false;
+		for(int i = 0;i < list.size();i++){
+			if(list.get(i).fileid == fileid){
+				try{
+					File f = new File(list.get(i).filehash);
+					f.delete();
+					ret = true;
+				}catch(Exception e){
+					
+				}
+			}
+		}
+		store();
+		return ret;
 	}
 }
