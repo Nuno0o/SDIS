@@ -54,15 +54,18 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
   public void delete(String path) {
       try {
           System.out.println("Deleting file in :" + path);
-          
+
           String fileid = Chunker.findMetaData(path);
-          
+
+          System.out.println("Found fileID: " + fileid);
+
           if(fileid == null){
         	  System.out.println("This file hasn't been backed up");
         	  return;
           }
-          
+
           this.deleteSubprotocol = new DeleteSubprotocol(this.peer,fileid);
+          this.deleteSubprotocol.start();
 
       } catch(Exception e){
     	  System.out.println("Couldn't execute delete protocol");

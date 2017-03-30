@@ -96,11 +96,15 @@ public class ChunksStored {
 		load();
 		boolean ret = false;
 		for(int i = 0;i < list.size();i++){
-			if(list.get(i).fileid.equals(fileid)){
+			System.out.println(list.get(i).fileid + ":" + list.get(i).chunkNo);
+			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
 				try{
+
 					File f = new File(list.get(i).filehash);
 					f.delete();
 					ret = true;
+					list.remove(i);
+					i--;
 				}catch(Exception e){
 
 				}
