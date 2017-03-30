@@ -119,7 +119,6 @@ public class ChunksStored {
 		load();
 		ArrayList<String> toReturn = new ArrayList<String>();
 		for(int i = 0;i < list.size();i++){
-			System.out.println(list.get(i).fileid + ":" + list.get(i).chunkNo);
 			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
 				toReturn.add(list.get(i).fileid + ":" + list.get(i).chunkNo);
 			}

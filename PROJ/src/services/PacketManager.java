@@ -7,6 +7,7 @@ import fileManagement.WriteFile;
 import utilities.Constants;
 import utilities.RandomDelay;
 
+import java.util.ArrayList;
 import java.net.DatagramPacket;
 import java.util.Set;
 import java.io.File;
@@ -70,7 +71,7 @@ public class PacketManager {
 		try{
 			Thread.sleep(RandomDelay.getRandomDelay());
 		}catch(Exception e){
-			
+
 		}
 		//Send stored answer
 		if (!sendStoredChunk(chunk)) return false;
@@ -120,13 +121,19 @@ public class PacketManager {
 
 	public boolean handleGetChunk(String packet){
 		String[] splitStr = packet.split("\\s+");
-		if(splitStr[1] != this.peer.protocol_version){
+		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
 		}
 		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
 			return false;
 		}
-		//TODO: Check if file exists return true if so else false
+
+		String fileId = splitStr[3];
+
+		ArrayList<String> storedChunksForFile = ChunksStored.getChunksStored(fileId);
+
+		// TODO: Obter chunks
+
 		return true;
 	}
 
