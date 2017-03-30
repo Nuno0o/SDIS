@@ -36,7 +36,7 @@ public class TestApp {
                     break;
                 }
                 case "RESTORE":
-                    //remote.restore(filepath);
+                    remote.restore(filepath);
                     break;
                 case "DELETE":
                     remote.delete(filepath);

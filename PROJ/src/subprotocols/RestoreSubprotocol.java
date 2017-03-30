@@ -1,0 +1,47 @@
+package subprotocols;
+
+import services.Peer;
+import utilities.Constants;
+import services.Message;
+import fileManagement.*;
+
+import java.io.IOException;
+import java.net.MulticastSocket;
+import java.net.DatagramPacket;
+
+public class RestoreSubprotocol extends Thread {
+
+    public Peer peer;
+    public String fileid;
+    public int chunkNo;
+
+    public RestoreSubprotocol(Peer peer, String fileid, int chunkNo){
+        this.peer = peer;
+        this.fileid = fileid;
+        this.chunkNo = chunkNo;
+    }
+
+    public void run(){
+
+        Message m = new Message();
+        String msg = m.getchunkMsg( this.peer.peerNumber,
+                                    this.fileid,
+                                    this.chunkNo );
+
+        DatagramPacket packet = new DatagramPacket( msg.getBytes(),
+                                                    msg.getBytes().length,
+                                                    this.peer.mcastMC,
+                                                    this.peer.portMC);
+
+        try {
+            this.peer.MC.msocket.send(packet);
+        } catch (IOException e){
+            System.err.println("RestoreSubprotocol Exception. Couldn't send packet. " + e.toString());
+            e.printStackTrace();
+        }
+
+        // Wait for CHUNK messages
+
+    }
+
+}

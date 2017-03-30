@@ -42,8 +42,6 @@ public class DeleteSubprotocol extends Thread {
             e.printStackTrace();
         }
 
-        // TODO: Repeat as many times as necessary to ensure all chunks were deleted.
-
     }
 
 }

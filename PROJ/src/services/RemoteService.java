@@ -5,6 +5,7 @@ import fileManagement.ChunksSending;
 import fileManagement.FileChunk;
 import subprotocols.BackupSubprotocol;
 import subprotocols.DeleteSubprotocol;
+import subprotocols.RestoreSubprotocol;
 import utilities.Constants;
 
 import java.io.*;
@@ -17,6 +18,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
   public Chunker chunker;
   public BackupSubprotocol backupSubprotocol;
   public DeleteSubprotocol deleteSubprotocol;
+  public RestoreSubprotocol restoreSubprotocol;
 
   public RemoteService(Peer peer) throws RemoteException{
     this.peer = peer;
@@ -71,6 +73,39 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
     	  System.out.println("Couldn't execute delete protocol");
       }
 
+  }
+
+  // The method that implements the restoring of chunks.
+  public void restore(String path) {
+      try {
+          System.out.println("Trying to restore file: " + path);
+
+          String fileid = Chunker.findMetaData(path);
+          int noChunks = Chunker.findFileNoChunks(path);
+
+          if (noChunks < 0) {
+              System.out.println("File not found?");
+              return;
+          }
+
+          System.out.println("Found fileID: " + fileid + " \nwith " + noChunks + " chunks.");
+
+          if (fileid == null){
+              System.out.println("This file hasn't been backed up.");
+              return;
+          }
+
+          int currentChunk = 0;
+
+          while (currentChunk < noChunks)
+          {
+              this.restoreSubprotocol = new RestoreSubprotocol(this.peer, fileid, currentChunk);
+              this.restoreSubprotocol.start();
+              currentChunk++;
+          }
+      } catch(Exception e){
+          System.err.println("Couldn't execute restore subprotocol");
+      }
   }
 
 }

@@ -78,6 +78,28 @@ public class Chunker {
 
 		return null;
 	}
+
+	public static int findFileNoChunks(String path) {
+		BufferedReader metad;
+		try{
+			metad = new BufferedReader(new FileReader("metadata.txt"));
+			String currLine;
+			while((currLine = metad.readLine()) != null){
+				String[] c = currLine.split(":");
+				if(path.equals(c[0])){
+					metad.close();
+					return Integer.parseInt(c[2]) / Constants.MAX_BODY_SIZE + 1;
+				}
+
+			}
+			metad.close();
+		}catch(Exception e){
+
+		}
+
+		return -1;
+	}
+
 	public static void removeMetaData(String fid){
 		ArrayList<String> toKeep = new ArrayList<String>();
 		BufferedReader metad;

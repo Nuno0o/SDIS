@@ -8,7 +8,7 @@ public interface RemoteServiceInterface extends Remote{
     public void backup(String path, int repDeg) throws RemoteException;
 
     // The restore execution method
-    //public void restore() throws RemoteException;
+    public void restore(String path) throws RemoteException;
 
     // The delete execution method
     public void delete(String path) throws RemoteException;
