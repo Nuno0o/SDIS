@@ -1,5 +1,4 @@
 package fileManagement;
-import java.security.MessageDigest;
 
 public class FileChunk {
 	public String fileId;

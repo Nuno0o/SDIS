@@ -1,6 +1,5 @@
 package threading;
 
-import services.PacketManager;
 import services.Peer;
 
 import java.net.*;

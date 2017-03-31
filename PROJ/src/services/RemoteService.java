@@ -1,7 +1,6 @@
 package services;
 
 import fileManagement.Chunker;
-import fileManagement.ChunksSending;
 import fileManagement.FileChunk;
 import fileManagement.Metadata;
 import subprotocols.BackupSubprotocol;
@@ -9,7 +8,6 @@ import subprotocols.DeleteSubprotocol;
 import subprotocols.RestoreSubprotocol;
 import utilities.Constants;
 
-import java.io.*;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 

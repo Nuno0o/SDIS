@@ -9,9 +9,6 @@ import utilities.RandomDelay;
 
 import java.util.ArrayList;
 import java.net.DatagramPacket;
-import java.util.Set;
-import java.io.File;
-import java.io.FilenameFilter;
 
 public class PacketManager {
 	public Peer peer;

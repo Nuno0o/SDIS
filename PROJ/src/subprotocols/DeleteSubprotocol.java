@@ -5,7 +5,6 @@ import utilities.Constants;
 import services.Message;
 import fileManagement.*;
 
-import java.io.IOException;
 import java.net.*;
 
 public class DeleteSubprotocol extends Thread {

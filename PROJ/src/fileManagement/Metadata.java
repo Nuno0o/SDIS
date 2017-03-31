@@ -7,7 +7,6 @@ import java.io.FileWriter;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 
-import fileManagement.ChunksStored.ChunkInfo;
 import utilities.Constants;
 
 public class Metadata {

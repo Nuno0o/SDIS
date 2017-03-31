@@ -1,7 +1,6 @@
 package threading;
 
 import services.Peer;
-import services.PacketManager;
 import java.net.*;
 
 public class MCchannel extends Channel {
