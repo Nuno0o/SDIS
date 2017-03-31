@@ -3,6 +3,7 @@ package services;
 import fileManagement.Chunker;
 import fileManagement.ChunksSending;
 import fileManagement.FileChunk;
+import fileManagement.Metadata;
 import subprotocols.BackupSubprotocol;
 import subprotocols.DeleteSubprotocol;
 import subprotocols.RestoreSubprotocol;
@@ -33,7 +34,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
       FileChunk currentChunk = this.chunker.nextChunk();
 
-      chunker.saveMetaData();
+      Metadata.saveMetadata(path,chunker.fileid);
 
       while (currentChunk != null) {
 
@@ -57,7 +58,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       try {
           System.out.println("Deleting file in :" + path);
 
-          String fileid = Chunker.findMetaData(path);
+          String fileid = Metadata.findMetadata(path);
 
           System.out.println("Found fileID: " + fileid);
 
@@ -80,8 +81,8 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       try {
           System.out.println("Trying to restore file: " + path);
 
-          String fileid = Chunker.findMetaData(path);
-          int noChunks = Chunker.findFileNoChunks(path);
+          String fileid = Metadata.findMetadata(path);
+          int noChunks = Metadata.findFileNoChunks(path);
 
           if (noChunks < 0) {
               System.out.println("File not found?");

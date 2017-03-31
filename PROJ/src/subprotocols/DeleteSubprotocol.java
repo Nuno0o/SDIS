@@ -36,7 +36,7 @@ public class DeleteSubprotocol extends Thread {
         		NTries--;
         		Thread.sleep(300);
         	}
-            Chunker.removeMetaData(this.fileid);
+            Metadata.removeMetaData(this.fileid);
         } catch (Exception e){
             System.err.println("DeleteSubprotocol Exception. Couldn't send packet. " + e.toString());
             e.printStackTrace();

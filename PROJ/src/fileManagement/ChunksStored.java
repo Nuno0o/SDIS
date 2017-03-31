@@ -49,12 +49,9 @@ public class ChunksStored {
 		}
 	}
 	public static void store(){
-		String line = new String();
-
 		try{
 			PrintWriter pw = new PrintWriter(new FileWriter(filename));
 			for(int i = 0;i < list.size();i++){
-				System.out.println(list.size());
 				pw.println(list.get(i).fileid + ";" + list.get(i).chunkNo + ";" + list.get(i).filehash + ";" + list.get(i).RepDegree + ";" + list.get(i).realRepDegree);
 			}
 			pw.close();

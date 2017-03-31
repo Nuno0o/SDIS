@@ -7,19 +7,18 @@ import java.security.MessageDigest;
 
 public class Chunker {
 	//IO file variables
-	File file;
-	BufferedReader br;
-
-	String path;
-
+	public File file;
+	public BufferedReader br;
+	//Path to file
+	public String path;
 	//Chunk number
-	int chunkNo;
+	public int chunkNo;
 	//How much has been read
-	int chunkRead;
-
-	int repDeg;
-
-	String fileid;
+	public int chunkRead;
+	//Replication degree
+	public int repDeg;
+	//File id
+	public String fileid;
 	public Chunker(String path, int repDeg){
 		try{
 			this.path = path;
@@ -45,93 +44,7 @@ public class Chunker {
 		this.chunkRead = 0;
 	}
 
-	public void saveMetaData(){
-		BufferedWriter metad;
-		try{
-			metad = new BufferedWriter(new FileWriter("metadata.txt",true));
-			String metadata = this.path + ":" + this.fileid + ":" + new File(path).length();
-			metad.write(metadata,0,metadata.length());
-			metad.newLine();
-			metad.close();
-		}catch(Exception e){
-
-		}
-	}
-
-	public static String findMetaData(String path){
-		BufferedReader metad;
-		try{
-			metad = new BufferedReader(new FileReader("metadata.txt"));
-			String currLine;
-			while((currLine = metad.readLine()) != null){
-				String[] c = currLine.split(":");
-				if(path.equals(c[0])){
-					metad.close();
-					return c[1];
-				}
-
-			}
-			metad.close();
-		}catch(Exception e){
-
-		}
-
-		return null;
-	}
-
-	public static int findFileNoChunks(String path) {
-		BufferedReader metad;
-		try{
-			metad = new BufferedReader(new FileReader("metadata.txt"));
-			String currLine;
-			while((currLine = metad.readLine()) != null){
-				String[] c = currLine.split(":");
-				if(path.equals(c[0])){
-					metad.close();
-					return Integer.parseInt(c[2]) / Constants.MAX_BODY_SIZE + 1;
-				}
-
-			}
-			metad.close();
-		}catch(Exception e){
-
-		}
-
-		return -1;
-	}
-
-	public static void removeMetaData(String fid){
-		ArrayList<String> toKeep = new ArrayList<String>();
-		BufferedReader metad;
-		try{
-			metad = new BufferedReader(new FileReader("metadata.txt"));
-			String currLine;
-			while((currLine = metad.readLine()) != null){
-				String[] c = currLine.split(":");
-				if(fid.equals(c[1])){
-					continue;
-				}else toKeep.add(currLine);
-
-			}
-			metad.close();
-		}catch(Exception e){
-
-		}
-
-		BufferedWriter meta2d;
-		try{
-			meta2d = new BufferedWriter(new FileWriter("metadata.txt",false));
-			for(int i = 0;i < toKeep.size();i++){
-				meta2d.write(toKeep.get(i),0,toKeep.get(i).length());
-				meta2d.newLine();
-			}
-
-			meta2d.close();
-		}catch(Exception e){
-
-		}
-
-	}
+	
 	public void close(){
 		try{
 			this.br.close();
