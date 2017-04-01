@@ -1,5 +1,7 @@
 package fileManagement;
 
+import utilities.Constants;
+
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -117,5 +119,28 @@ public class ChunksStored {
 			}
 		}
 		return toReturn;
+	}
+
+	public static char[] getChunkData(String fileid, int chunkNo){
+		load();
+		for(int i = 0;i < list.size();i++){
+			System.out.println(list.get(i).fileid + ":" + list.get(i).chunkNo);
+			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid) && list.get(i).chunkNo == chunkNo){
+				try{
+					FileReader reader = new FileReader(new String(fileid+":"+chunkNo));
+					BufferedReader bufreader = new BufferedReader(reader);
+
+					char[] data = new char[Constants.MAX_BODY_SIZE];
+ 					bufreader.read(data,0,Constants.MAX_BODY_SIZE);
+					System.out.println("Caught data.");
+					return data;
+
+				}catch(Exception e){
+					System.err.println("Exception");
+					e.printStackTrace();
+				}
+			}
+		}
+		return null;
 	}
 }

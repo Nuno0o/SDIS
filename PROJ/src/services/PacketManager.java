@@ -38,6 +38,10 @@ public class PacketManager {
 			return handleStored(packet);
 		}
 
+		if (splitStr[0].equals("CHUNK")){
+			return handleChunk(packet);
+		}
+
 		System.out.println("Reached");
 		return false;
 	}
@@ -116,6 +120,25 @@ public class PacketManager {
 		return true;
 	}
 
+	public boolean sendChunkMessage(String fileId, int chunkNo, String data){
+		Message m = new Message();
+		String chunkMsg = m.chunkMsg(this.peer.peerNumber, fileId, chunkNo, data);
+
+		DatagramPacket packet = new DatagramPacket(chunkMsg.getBytes(),
+											chunkMsg.getBytes().length,
+											this.peer.mcastMDR,
+											this.peer.portMDR);
+
+		try {
+			this.peer.MDR.msocket.send(packet);
+		} catch (Exception e){
+			System.err.println("Errror sending chunk message");
+			e.printStackTrace();
+		}
+
+		return true;
+	}
+
 	public boolean handleGetChunk(String packet){
 		String[] splitStr = packet.split("\\s+");
 		if(!splitStr[1].equals(this.peer.protocol_version)){
@@ -129,9 +152,22 @@ public class PacketManager {
 
 		ArrayList<String> storedChunksForFile = ChunksStored.getChunksStored(fileId);
 
-		// TODO: Obter chunks
+		System.out.println(storedChunksForFile.toString());
 
-		return true;
+		if (storedChunksForFile.contains(fileId+":"+splitStr[4])){
+			String data = new String(ChunksStored.getChunkData(fileId, Integer.parseInt(splitStr[4])));
+			try{
+				Thread.sleep(RandomDelay.getRandomDelay());
+			}catch(Exception e){
+
+			}
+
+			if (!sendChunkMessage(fileId, Integer.parseInt(splitStr[4]), data)) return false;
+			return true;
+
+		}
+
+		return false;
 	}
 
 	public boolean handleDelete(String packet){
@@ -143,5 +179,23 @@ public class PacketManager {
 			return false;
 		}
 		return ChunksStored.deleteFile(splitStr[3]);
+	}
+
+	public boolean handleChunk(String packet){
+		String[] splitStr = packet.split("\\s+");
+		String[] splitStr2 = packet.split(Constants.CRLF);
+		if(!splitStr[1].equals(this.peer.protocol_version)){
+			return false;
+		}
+		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
+			return false;
+		}
+		System.out.println("Got chunk MSG");
+
+		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),1);
+		wf.storeChunk(chunk, splitStr[3]+":"+splitStr[4]);
+		ChunksStored.addNew(chunk);
+
+		return true;
 	}
 }
