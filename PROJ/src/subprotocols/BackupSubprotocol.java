@@ -30,7 +30,6 @@ public class BackupSubprotocol extends Thread{
         int tries = Constants.MAX_TRIES;
         while(tries > Constants.ZERO_TRIES){
 
-            if (ChunksSending.chunks == null) ChunksSending.init();
         	ChunksSending.add(chunk);
 
             String data = new String(this.chunk.data);

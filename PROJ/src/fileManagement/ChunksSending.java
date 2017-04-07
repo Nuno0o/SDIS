@@ -11,11 +11,7 @@ public class ChunksSending {
 			this.nConfirmations = 0;
 		}
 	}
-	public static ArrayList<ChunkSent> chunks;
-
-	public static void init(){
-		chunks = new ArrayList<ChunkSent>();
-	}
+	public static ArrayList<ChunkSent> chunks = new ArrayList<ChunkSent>();
 
 	public static void add(FileChunk c){
 		chunks.add(new ChunkSent(c));

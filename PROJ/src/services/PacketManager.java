@@ -1,5 +1,6 @@
 package services;
 
+import fileManagement.ChunksRestSending;
 import fileManagement.ChunksSending;
 import fileManagement.ChunksStored;
 import fileManagement.FileChunk;
@@ -191,6 +192,10 @@ public class PacketManager {
 			return false;
 		}
 		System.out.println("Got chunk MSG");
+		//In case it's a chunk that's being sent and this is another peer that also responded with that chunk
+		if(ChunksRestSending.incrementResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
+			return true;
+		}
 
 		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),1);
 		wf.storeChunk(chunk, splitStr[3]+":"+splitStr[4]);
