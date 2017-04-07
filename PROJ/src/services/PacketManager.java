@@ -42,6 +42,10 @@ public class PacketManager {
 			return handleChunk(packet);
 		}
 
+		if (splitStr[0].equals("REMOVED")){
+			return handleRemoved(packet);
+		}
+
 		System.out.println("Reached");
 		return false;
 	}
@@ -195,6 +199,16 @@ public class PacketManager {
 		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),1);
 		wf.storeChunk(chunk, splitStr[3]+":"+splitStr[4]);
 		ChunksStored.addNew(chunk);
+
+		return true;
+	}
+
+	public boolean handleRemoved(String packet){
+
+		// update local count of chunk (count --)
+		
+		// if count drops below, initiate BackupSubprotocol after delay
+		//if  during the delay gets PUTCHUNK of the same file chunk, back off
 
 		return true;
 	}
