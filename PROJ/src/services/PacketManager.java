@@ -1,9 +1,11 @@
 package services;
 
+import fileManagement.ChunksRestSending;
 import fileManagement.ChunksSending;
 import fileManagement.ChunksStored;
 import fileManagement.FileChunk;
 import fileManagement.WriteFile;
+import subprotocols.RestoreSendChunk;
 import utilities.Constants;
 import utilities.RandomDelay;
 
@@ -161,12 +163,12 @@ public class PacketManager {
 		if (storedChunksForFile.contains(fileId+":"+splitStr[4])){
 			String data = new String(ChunksStored.getChunkData(fileId, Integer.parseInt(splitStr[4])));
 			try{
-				Thread.sleep(RandomDelay.getRandomDelay());
+				RestoreSendChunk r = new RestoreSendChunk(this.peer,fileId,Integer.parseInt(splitStr[4]),data);
+				r.start();
 			}catch(Exception e){
 
 			}
 
-			if (!sendChunkMessage(fileId, Integer.parseInt(splitStr[4]), data)) return false;
 			return true;
 
 		}
@@ -195,6 +197,10 @@ public class PacketManager {
 			return false;
 		}
 		System.out.println("Got chunk MSG");
+		//In case it's a chunk that's being sent and this is another peer that also responded with that chunk
+		if(ChunksRestSending.incrementResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
+			return true;
+		}
 
 		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),1);
 		wf.storeChunk(chunk, splitStr[3]+":"+splitStr[4]);
