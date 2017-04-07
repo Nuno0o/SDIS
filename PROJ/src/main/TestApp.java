@@ -42,7 +42,7 @@ public class TestApp {
                     remote.delete(filepath);
                     break;
                 case "RECLAIM":
-                    //remote.reclaim(...);
+                    remote.manageStorage(Integer.parseInt(args[2]));
                     break;
             }
 

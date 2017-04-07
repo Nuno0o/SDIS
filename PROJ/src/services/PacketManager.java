@@ -5,9 +5,11 @@ import fileManagement.ChunksSending;
 import fileManagement.ChunksStored;
 import fileManagement.FileChunk;
 import fileManagement.WriteFile;
+import fileManagement.PutchunksSending;
 import subprotocols.RestoreSendChunk;
 import utilities.Constants;
 import utilities.RandomDelay;
+import subprotocols.BackupSubprotocol;
 
 import java.util.ArrayList;
 import java.net.DatagramPacket;
@@ -66,6 +68,11 @@ public class PacketManager {
 			System.out.println("Peer Mismatch");
 			return false;
 		}
+
+		if(PutchunksSending.incrementResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
+			return true;
+		}
+
 		//Create new chunk out of packet
 		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
 		//Chunk name
@@ -211,10 +218,36 @@ public class PacketManager {
 
 	public boolean handleRemoved(String packet){
 
+		String[] splitStr = packet.split("\\s+");
+
 		// update local count of chunk (count --)
-		
+		ChunksStored.decRepDeg(splitStr[3],Integer.parseInt(splitStr[4]));
+
 		// if count drops below, initiate BackupSubprotocol after delay
-		//if  during the delay gets PUTCHUNK of the same file chunk, back off
+		if (ChunksStored.lessThanReal(splitStr[3],Integer.parseInt(splitStr[4]))){
+
+			try {
+				Thread.sleep(RandomDelay.getRandomDelay());
+			} catch(Exception e){
+				System.err.println("InterruptedException: " + e.toString());
+				e.printStackTrace();
+			}
+
+			//TODO: if  during the delay gets PUTCHUNK of the same file chunk, back off
+			if(PutchunksSending.hasResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
+	    		return true;
+	    	}
+			// else
+
+			new BackupSubprotocol(	this.peer,
+			 						new FileChunk(splitStr[3],
+										new String (ChunksStored.getChunkData(splitStr[3],Integer.parseInt(splitStr[4]))).getBytes(),
+										Integer.parseInt(splitStr[4]),
+										ChunksStored.getRepDeg(splitStr[3],Integer.parseInt(splitStr[4]))),
+									ChunksStored.getRepDeg(splitStr[3],Integer.parseInt(splitStr[4]))).start();
+
+			System.out.println("Started BackupSubprotocol from Removed, everything operational.");
+		}
 
 		return true;
 	}

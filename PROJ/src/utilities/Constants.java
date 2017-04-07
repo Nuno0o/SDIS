@@ -10,7 +10,8 @@ public class Constants {
 	public static final int MAX_TRIES = 5;
 	public static final int ZERO_TRIES = 0;
 	public static final int ONE_SECOND = 1000;
-	
+	public static final int MAX_PEER_SIZE = Integer.MAX_VALUE; //default?
+
 
 	public static final String CRLF = Character.toString((char)13) + Character.toString((char)10);
 }

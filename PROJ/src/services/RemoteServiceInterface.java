@@ -14,6 +14,6 @@ public interface RemoteServiceInterface extends Remote{
     public void delete(String path) throws RemoteException;
 
     // The reclaim execution method
-    //public void reclaim() throws RemoteException;
+    public void manageStorage(int kbs) throws RemoteException;
 
 }

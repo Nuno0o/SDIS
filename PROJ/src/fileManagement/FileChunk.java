@@ -17,5 +17,15 @@ public class FileChunk {
 		this.fileId = fileid;
 	}
 
+	public boolean equals(FileChunk c){
+		if (this.fileId.equals(c.fileId) && this.chunkNo == c.chunkNo){
+			return true;
+		}
+		return false;
+	}
+
+	public int getSpace(){
+		return data.length;
+	}
 
 }

@@ -1,5 +1,6 @@
 package services;
 
+import utilities.Constants;
 import threading.MCchannel;
 import threading.MDBchannel;
 import threading.MDRchannel;
@@ -30,7 +31,9 @@ public class Peer {
 	public MCchannel MC;
 	public MDBchannel MDB;
 	public MDRchannel MDR;
-	
+
+	public int storageSpace;
+
 	public Peer(String[] args){
 		//Init peer information
 		this.protocol_version = args[0];
@@ -50,6 +53,8 @@ public class Peer {
 			this.MC = new MCchannel(this);
 			this.MDB = new MDBchannel(this);
 			this.MDR = new MDRchannel(this);
+
+			this.storageSpace = Constants.MAX_PEER_SIZE;
 		}catch(Exception e){
 			System.out.println("Couldn't open all channels...");
 			System.exit(1);

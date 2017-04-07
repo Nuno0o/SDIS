@@ -57,8 +57,10 @@ public class BackupSubprotocol extends Thread{
             try{
             	Thread.sleep(Constants.ONE_SECOND);
             }catch(Exception e){
-            	//???
+            	System.err.println("Exception: " + e.toString());
+                e.printStackTrace();
             }
+
             if(ChunksSending.hasEnoughResponses(chunk)){
             	break;
             }else{

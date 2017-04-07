@@ -37,7 +37,7 @@ public class ChunksSending {
 
 	public static Boolean hasEnoughResponses(FileChunk c){
 		for(int i = 0;i < chunks.size();i++){
-			if(chunks.get(i).c == c){
+			if(chunks.get(i).c.equals(c)){
 				boolean ret = false;
 				if(chunks.get(i).nConfirmations >= c.repDeg)
 					ret = true;

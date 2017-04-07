@@ -2,6 +2,7 @@ package services;
 
 import fileManagement.Chunker;
 import fileManagement.FileChunk;
+import fileManagement.ChunksStored;
 import fileManagement.Metadata;
 import subprotocols.BackupSubprotocol;
 import subprotocols.DeleteSubprotocol;
@@ -15,7 +16,6 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
   public Peer peer;
   public Chunker chunker;
-  public BackupSubprotocol backupSubprotocol;
   public DeleteSubprotocol deleteSubprotocol;
   public RestoreSubprotocol restoreSubprotocol;
 
@@ -38,9 +38,12 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
           System.out.println("Im here");
 
-          this.backupSubprotocol = new BackupSubprotocol(this.peer, currentChunk, repDeg);
+          if (currentChunk.getSpace() > (this.peer.storageSpace - ChunksStored.getSpaceUsed())){
+              System.out.println("Couldn't store chunk: not enough space!");
+              break;
+          }
 
-          this.backupSubprotocol.start();
+          new BackupSubprotocol(this.peer, currentChunk, repDeg).start();
 
           if(currentChunk.data.length < Constants.MAX_BODY_SIZE)
             break;
@@ -105,6 +108,17 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       } catch(Exception e){
           System.err.println("Couldn't execute restore subprotocol");
       }
+  }
+
+  public void manageStorage (int kbs) {
+
+      int spaceUsed = ChunksStored.getSpaceUsed();
+
+      if (spaceUsed <= kbs)
+        this.peer.storageSpace = kbs;
+
+      // else start reclaiming
+
   }
 
 }

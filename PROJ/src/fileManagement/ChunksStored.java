@@ -86,6 +86,20 @@ public class ChunksStored {
 		}
 		return false;
 	}
+
+	public static int getRepDeg(String fileid, int chunkNo){
+		load();
+		for (int i = 0; i < list.size(); i++){
+			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
+				if (list.get(i).chunkNo == chunkNo){
+					return list.get(i).RepDegree;
+				}
+
+			}
+		}
+		return -1;
+	}
+
 	//Returns true if at least 1 chunk has been deleted
 	public static boolean deleteFile(String fileid){
 		load();
@@ -107,6 +121,35 @@ public class ChunksStored {
 		}
 		store();
 		return ret;
+	}
+
+	public static boolean decRepDeg(String fileid, int chunkNo){
+		load();
+		boolean success = false;
+		for (int i = 0; i < list.size(); i++){
+			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
+				if (list.get(i).chunkNo == chunkNo){
+					list.get(i).RepDegree--;
+					success = true;
+				}
+
+			}
+		}
+		if (success) store();
+		return success;
+	}
+
+	public static boolean lessThanReal(String fileid, int chunkNo){
+		load();
+		for (int i = 0; i < list.size(); i++){
+			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
+				if (list.get(i).chunkNo == chunkNo){
+					if(list.get(i).realRepDegree < list.get(i).RepDegree)
+						return true;
+				}
+			}
+		}
+		return false;
 	}
 
 	// Returns chunks for a given file
@@ -142,5 +185,14 @@ public class ChunksStored {
 			}
 		}
 		return null;
+	}
+
+	public static int getSpaceUsed(){
+		load();
+		int retorno = 0;
+		for(int i = 0;i < list.size();i++){
+			retorno += new File(list.get(i).fileid+":"+list.get(i).chunkNo).length();
+		}
+		return retorno;
 	}
 }

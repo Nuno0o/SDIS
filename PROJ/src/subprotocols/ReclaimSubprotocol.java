@@ -19,6 +19,7 @@ public class ReclaimSubprotocol extends Thread {
     }
 
     public void run(){
+
         Message m = new Message();
 
         String msg = m.removedMsg(  this.peer.peerNumber,
