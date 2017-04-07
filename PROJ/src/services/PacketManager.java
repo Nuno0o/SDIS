@@ -5,6 +5,7 @@ import fileManagement.ChunksSending;
 import fileManagement.ChunksStored;
 import fileManagement.FileChunk;
 import fileManagement.WriteFile;
+import subprotocols.RestoreSendChunk;
 import utilities.Constants;
 import utilities.RandomDelay;
 
@@ -158,12 +159,12 @@ public class PacketManager {
 		if (storedChunksForFile.contains(fileId+":"+splitStr[4])){
 			String data = new String(ChunksStored.getChunkData(fileId, Integer.parseInt(splitStr[4])));
 			try{
-				Thread.sleep(RandomDelay.getRandomDelay());
+				RestoreSendChunk r = new RestoreSendChunk(this.peer,fileId,Integer.parseInt(splitStr[4]),data);
+				r.start();
 			}catch(Exception e){
 
 			}
 
-			if (!sendChunkMessage(fileId, Integer.parseInt(splitStr[4]), data)) return false;
 			return true;
 
 		}
