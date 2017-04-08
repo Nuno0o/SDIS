@@ -8,6 +8,7 @@ import utilities.Constants;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
+import java.net.MulticastSocket;
 
 public class BackupSubprotocol extends Thread{
 
@@ -26,9 +27,17 @@ public class BackupSubprotocol extends Thread{
     }
 
     public void run(){
+    	MulticastSocket msocket = null;
+    	try{
+    		msocket = new MulticastSocket(this.peer.portMC);
+    		msocket.joinGroup(this.peer.mcastMDB);
+    	}catch(Exception e){
+    		
+    	}
 
         int tries = Constants.MAX_TRIES;
         while(tries > Constants.ZERO_TRIES){
+        	
 
         	ChunksSending.add(chunk);
 
@@ -47,7 +56,7 @@ public class BackupSubprotocol extends Thread{
             this.peer.portMDB);
 
             try {
-                this.peer.MDB.writeToMulticast(packet);
+                msocket.send(packet);
             } catch (Exception e){
                 System.err.println("BackupSubprotocol Exception. Couldn't send packet. " + e.toString());
                 e.printStackTrace();
@@ -67,5 +76,11 @@ public class BackupSubprotocol extends Thread{
             	continue;
             }
         }
+        try{
+        	msocket.close();
+        }catch(Exception e){
+        	
+        }
+        
     }
 }
