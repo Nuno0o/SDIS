@@ -25,7 +25,7 @@ public class ChunksStored {
 	public static String filename = "storedchunks.txt";
 	public static ArrayList<ChunkInfo> list = new ArrayList<ChunkInfo>();
 	//
-	public static void load(){
+	public synchronized static void load(){
 		list.clear();
 		//each line read
 		String line = null;
@@ -46,7 +46,7 @@ public class ChunksStored {
 		}catch(Exception e){
 		}
 	}
-	public static void store(){
+	public synchronized static void store(){
 		try{
 			PrintWriter pw = new PrintWriter(new FileWriter(filename));
 			for(int i = 0;i < list.size();i++){
@@ -57,7 +57,7 @@ public class ChunksStored {
 			System.out.println("Error printing store message");
 		}
 	}
-	public static Boolean addNew(FileChunk chunk){
+	public synchronized static Boolean addNew(FileChunk chunk){
 		load();
 		for(int i = 0;i < list.size();i++){
 			if(list.get(i).fileid.equals(chunk.fileId) && list.get(i).chunkNo == chunk.chunkNo){
@@ -75,7 +75,7 @@ public class ChunksStored {
 		return true;
 	}
 	//Inc replication degree of chunk
-	public static boolean incDegree(String fileid,int chunkno){
+	public synchronized static boolean incDegree(String fileid,int chunkno){
 		load();
 		for(int i = 0; i < list.size();i++){
 			if(list.get(i).fileid.equals(fileid) && list.get(i).chunkNo == chunkno){
@@ -87,7 +87,7 @@ public class ChunksStored {
 		return false;
 	}
 
-	public static int getRepDeg(String fileid, int chunkNo){
+	public synchronized static int getRepDeg(String fileid, int chunkNo){
 		load();
 		for (int i = 0; i < list.size(); i++){
 			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
@@ -101,7 +101,7 @@ public class ChunksStored {
 	}
 
 	//Returns true if at least 1 chunk has been deleted
-	public static boolean deleteFile(String fileid){
+	public synchronized static boolean deleteFile(String fileid){
 		load();
 		boolean ret = false;
 		for(int i = 0;i < list.size();i++){
@@ -123,7 +123,7 @@ public class ChunksStored {
 		return ret;
 	}
 
-	public static boolean decRepDeg(String fileid, int chunkNo){
+	public synchronized static boolean decRepDeg(String fileid, int chunkNo){
 		load();
 		boolean success = false;
 		for (int i = 0; i < list.size(); i++){
@@ -139,7 +139,7 @@ public class ChunksStored {
 		return success;
 	}
 
-	public static boolean lessThanReal(String fileid, int chunkNo){
+	public synchronized static boolean lessThanReal(String fileid, int chunkNo){
 		load();
 		for (int i = 0; i < list.size(); i++){
 			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
@@ -153,7 +153,7 @@ public class ChunksStored {
 	}
 
 	// Returns chunks for a given file
-	public static ArrayList<String> getChunksStored(String fileid){
+	public synchronized static ArrayList<String> getChunksStored(String fileid){
 		load();
 		ArrayList<String> toReturn = new ArrayList<String>();
 		for(int i = 0;i < list.size();i++){
@@ -164,7 +164,7 @@ public class ChunksStored {
 		return toReturn;
 	}
 
-	public static char[] getChunkData(String fileid, int chunkNo){
+	public synchronized static char[] getChunkData(String fileid, int chunkNo){
 		load();
 		for(int i = 0;i < list.size();i++){
 			System.out.println(list.get(i).fileid + ":" + list.get(i).chunkNo);
@@ -186,7 +186,7 @@ public class ChunksStored {
 		return null;
 	}
 
-	public static int getSpaceUsed(){
+	public synchronized static int getSpaceUsed(){
 		load();
 		int retorno = 0;
 		for(int i = 0;i < list.size();i++){

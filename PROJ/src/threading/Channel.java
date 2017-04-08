@@ -1,7 +1,6 @@
 package threading;
 
 import utilities.Constants;
-import fileManagement.FileManager;
 import services.PacketManager;
 import services.Peer;
 import java.net.*;
@@ -12,7 +11,6 @@ public class Channel extends Thread {
 	public byte[] buffer;
 	public DatagramPacket packet;
 	public PacketManager packetmanager;
-	public FileManager filemanager;
 
 	public Channel(Peer p){
 		super("Peer" + p.peerNumber);

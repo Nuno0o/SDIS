@@ -13,8 +13,9 @@ public class ChunksSending {
 	}
 	public static ArrayList<ChunkSent> chunks = new ArrayList<ChunkSent>();
 
-	public static void add(FileChunk c){
-		chunks.add(new ChunkSent(c));
+	public synchronized static void add(FileChunk c){
+		ChunkSent sent = new ChunkSent(c);
+		chunks.add(sent);
 	}
 
 	/*public static void remove(FileChunk c){
@@ -25,7 +26,7 @@ public class ChunksSending {
 		}
 	}*/
 
-	public static Boolean incrementResponses(String fileid, int chunkNo){
+	public synchronized static Boolean incrementResponses(String fileid, int chunkNo){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).c.fileId.equals(fileid) && chunks.get(i).c.chunkNo == chunkNo){
 				chunks.get(i).nConfirmations++;
@@ -35,7 +36,7 @@ public class ChunksSending {
 		return false;
 	}
 
-	public static Boolean hasEnoughResponses(FileChunk c){
+	public synchronized static Boolean hasEnoughResponses(FileChunk c){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).c.equals(c)){
 				boolean ret = false;

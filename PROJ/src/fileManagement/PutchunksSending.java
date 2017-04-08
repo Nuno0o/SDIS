@@ -15,11 +15,11 @@ public class PutchunksSending {
 	}
 	public static ArrayList<PutchunkSent> chunks = new ArrayList<PutchunkSent>();
 
-	public static void add(String fileid, int chunkNo){
+	public synchronized static void add(String fileid, int chunkNo){
 		chunks.add(new PutchunkSent(fileid,chunkNo));
 	}
 
-	public static void remove(String fileid,int chunkNo){
+	public synchronized static void remove(String fileid,int chunkNo){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).fileid.equals(fileid) && chunks.get(i).chunkNo == chunkNo){
 				chunks.remove(i);
@@ -27,7 +27,7 @@ public class PutchunksSending {
 		}
 	}
 
-	public static Boolean incrementResponses(String fileid, int chunkNo){
+	public synchronized static Boolean incrementResponses(String fileid, int chunkNo){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).fileid.equals(fileid) && chunks.get(i).chunkNo == chunkNo){
 				chunks.get(i).nConfirmations++;
@@ -37,7 +37,7 @@ public class PutchunksSending {
 		return false;
 	}
 
-	public static Boolean hasResponses(String fileid,int chunkNo){
+	public synchronized static Boolean hasResponses(String fileid,int chunkNo){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).fileid.equals(fileid) && chunks.get(i).chunkNo == chunkNo){
 				boolean ret = false;

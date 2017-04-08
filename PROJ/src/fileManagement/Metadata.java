@@ -23,7 +23,7 @@ public class Metadata {
 	public static String filename = "metadata.txt";
 	public static ArrayList<FileMetadata> metad = new ArrayList<FileMetadata>();
 	
-	public static void load(){
+	public synchronized static void load(){
 		metad.clear();
 		//each line read
 		String line = null;
@@ -40,7 +40,7 @@ public class Metadata {
 		}
 	}
 	
-	public static void store(){
+	public synchronized static void store(){
 		try{
 			PrintWriter pw = new PrintWriter(new FileWriter(filename));
 			for(int i = 0;i < metad.size();i++){
@@ -52,14 +52,14 @@ public class Metadata {
 		}
 	}
 	
-	public static void saveMetadata(String path, String fileid){
+	public synchronized static void saveMetadata(String path, String fileid){
 		load();
 		FileMetadata newMetad = new FileMetadata(path,fileid,new File(path).length());
 		metad.add(newMetad);
 		store();
 	}
 	
-	public static String findMetadata(String path){
+	public synchronized static String findMetadata(String path){
 		load();
 		String ret = null;
 		for(int i = 0;i < metad.size();i++){
@@ -71,7 +71,7 @@ public class Metadata {
 		return ret;
 	}
 	
-    public static int findFileNoChunks(String path){
+    public synchronized static int findFileNoChunks(String path){
     	load();
     	long ret = -1;
     	for(int i = 0;i < metad.size();i++){
@@ -83,7 +83,7 @@ public class Metadata {
     	return (int)ret;
     }
     
-    public static void removeMetaData(String fid){
+    public synchronized static void removeMetaData(String fid){
     	load();
     	for(int i = 0;i < metad.size();i++){
     		if(metad.get(i).fid.equals(fid)){

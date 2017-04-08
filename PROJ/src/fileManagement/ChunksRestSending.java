@@ -17,11 +17,11 @@ public class ChunksRestSending {
 	}
 	public static ArrayList<ChunkRestSent> chunks = new ArrayList<ChunkRestSent>();
 
-	public static void add(String fileid, int chunkNo){
+	public synchronized static void add(String fileid, int chunkNo){
 		chunks.add(new ChunkRestSent(fileid,chunkNo));
 	}
 
-	public static void remove(String fileid,int chunkNo){
+	public synchronized static void remove(String fileid,int chunkNo){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).fileid == fileid && chunks.get(i).chunkNo == chunkNo){
 				chunks.remove(i);
@@ -29,7 +29,7 @@ public class ChunksRestSending {
 		}
 	}
 
-	public static Boolean incrementResponses(String fileid, int chunkNo){
+	public synchronized static Boolean incrementResponses(String fileid, int chunkNo){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).fileid.equals(fileid) && chunks.get(i).chunkNo == chunkNo){
 				chunks.get(i).nConfirmations++;
@@ -39,7 +39,7 @@ public class ChunksRestSending {
 		return false;
 	}
 
-	public static Boolean hasResponses(String fileid,int chunkNo){
+	public synchronized static Boolean hasResponses(String fileid,int chunkNo){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).fileid == fileid && chunks.get(i).chunkNo == chunkNo){
 				boolean ret = false;
