@@ -25,5 +25,14 @@ public class Channel extends Thread {
 
 		this.packetmanager = new PacketManager(this.peer);
 	}
+	
+	public synchronized void writeToMulticast(DatagramPacket p){
+		try{
+			this.msocket.send(p);
+		}catch(Exception e){
+			
+		}
+		
+	}
 
 }

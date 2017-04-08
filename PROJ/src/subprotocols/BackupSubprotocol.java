@@ -47,8 +47,8 @@ public class BackupSubprotocol extends Thread{
             this.peer.portMDB);
 
             try {
-                this.peer.MDB.msocket.send(packet);
-            } catch (IOException e){
+                this.peer.MDB.writeToMulticast(packet);
+            } catch (Exception e){
                 System.err.println("BackupSubprotocol Exception. Couldn't send packet. " + e.toString());
                 e.printStackTrace();
             }
