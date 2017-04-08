@@ -29,7 +29,7 @@ public class BackupSubprotocol extends Thread{
     public void run(){
     	MulticastSocket msocket = null;
     	try{
-    		msocket = new MulticastSocket(this.peer.portMC);
+    		msocket = new MulticastSocket(this.peer.portMDB);
     		msocket.joinGroup(this.peer.mcastMDB);
     	}catch(Exception e){
     		

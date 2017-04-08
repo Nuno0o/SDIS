@@ -9,9 +9,9 @@ public class MCchannel extends Channel {
 		super(p);
 
 		try{
-			this.msocket = new MulticastSocket(this.peer.portMDB);
+			this.msocket = new MulticastSocket(this.peer.portMC);
 
-			this.msocket.joinGroup(this.peer.mcastMDB);
+			this.msocket.joinGroup(this.peer.mcastMC);
 		}catch(Exception e){
 			System.out.println("Couldn't connect to multicast channel");
 			System.exit(1);
