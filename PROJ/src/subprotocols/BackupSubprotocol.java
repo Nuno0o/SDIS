@@ -32,18 +32,17 @@ public class BackupSubprotocol extends Thread{
 
         	ChunksSending.add(chunk);
 
-            String data = new String(this.chunk.data);
             Message m = new Message();
 
-            String msg = m.putchunkMsg( this.peer.peerNumber,
+            byte[] msg = m.putchunkMsg( this.peer.peerNumber,
                                         this.chunk.fileId,
                                         this.chunk.chunkNo,
                                         this.repDeg,
-                                        data);
+                                        this.chunk.data);
 
             // write putchunk
-            DatagramPacket packet = new DatagramPacket( msg.getBytes(),
-            msg.getBytes().length,
+            DatagramPacket packet = new DatagramPacket( msg,
+            msg.length,
             this.peer.mcastMDB,
             this.peer.portMDB);
 

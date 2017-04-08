@@ -11,6 +11,7 @@ import utilities.Constants;
 import utilities.RandomDelay;
 import subprotocols.BackupSubprotocol;
 
+import java.util.Arrays;
 import java.util.ArrayList;
 import java.net.DatagramPacket;
 
@@ -22,12 +23,14 @@ public class PacketManager {
 		this.peer = peer;
 		this.wf = new WriteFile();
 	}
-	public boolean handlePacket(String packet){
+	//public boolean handlePacket(String packet){
+	public boolean handlePacket(byte[] packetData, int length){
+		String[] splitStr = new String(packetData, 0, length).split("\\s+");
 
-		String[] splitStr = packet.split("\\s+");
+		String packet = new String(packetData, 0, length);
 
 		if (splitStr[0].equals("PUTCHUNK")) {
-			return handlePutChunk(packet);
+			return handlePutChunk(packetData, length);
 		}
 
 		if (splitStr[0].equals("GETCHUNK")){
@@ -43,29 +46,24 @@ public class PacketManager {
 		}
 
 		if (splitStr[0].equals("CHUNK")){
-			return handleChunk(packet);
+			return handleChunk(packetData, length);
 		}
 
 		if (splitStr[0].equals("REMOVED")){
 			return handleRemoved(packet);
 		}
-
-		System.out.println("Reached");
 		return false;
 	}
 
-	public boolean handlePutChunk(String packet){
+	public boolean handlePutChunk(byte[] packetData, int length){
 
-		System.out.println("PUTCHUNKK");
-		String[] splitStr = packet.split("\\s+");
-		String[] splitStr2 = packet.split(Constants.CRLF);
+		String[] splitStr = new String(packetData, 0, length).split("\\s+");
+		String[] splitStr2 = new String(packetData, 0, length).split(Constants.CRLF);
 
 		if(!splitStr[1].equals(this.peer.protocol_version)){
-			System.out.println("Version Mismatch: " + splitStr[1] + " != " + this.peer.protocol_version);
 			return false;
 		}
 		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
-			System.out.println("Peer Mismatch");
 			return false;
 		}
 
@@ -74,7 +72,7 @@ public class PacketManager {
 		}
 
 		//Create new chunk out of packet
-		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
+		FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length(), length -1),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
 		//Chunk name
 		String chunkname = chunk.fileId+":"+chunk.chunkNo;
 		//Store chunk in filesystem
@@ -96,11 +94,9 @@ public class PacketManager {
 		String[] splitStr = packet.split("\\s+");
 
 		if(!splitStr[1].equals(this.peer.protocol_version)){
-			System.out.println("Version Mismatch: " + splitStr[1] + " != " + this.peer.protocol_version);
 			return false;
 		}
 		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
-			System.out.println("Peer Mismatch");
 			return false;
 		}
 
@@ -118,10 +114,10 @@ public class PacketManager {
 	public boolean sendStoredChunk(FileChunk chunk){
 		Message m = new Message();
 
-		String stored = m.storedMsg(this.peer.peerNumber, chunk.fileId, chunk.chunkNo);
+		byte[] stored = m.storedMsg(this.peer.peerNumber, chunk.fileId, chunk.chunkNo);
 
-		DatagramPacket packet = new DatagramPacket( stored.getBytes(),
-	            stored.getBytes().length,
+		DatagramPacket packet = new DatagramPacket( stored,
+	            stored.length,
 	            this.peer.mcastMC,
 	            this.peer.portMC);
 		try{
@@ -135,10 +131,10 @@ public class PacketManager {
 
 	public boolean sendChunkMessage(String fileId, int chunkNo, String data){
 		Message m = new Message();
-		String chunkMsg = m.chunkMsg(this.peer.peerNumber, fileId, chunkNo, data);
+		byte[] chunkMsg = m.chunkMsg(this.peer.peerNumber, fileId, chunkNo, data.getBytes());
 
-		DatagramPacket packet = new DatagramPacket(chunkMsg.getBytes(),
-											chunkMsg.getBytes().length,
+		DatagramPacket packet = new DatagramPacket(chunkMsg,
+											chunkMsg.length,
 											this.peer.mcastMDR,
 											this.peer.portMDR);
 
@@ -194,22 +190,22 @@ public class PacketManager {
 		return ChunksStored.deleteFile(splitStr[3]);
 	}
 
-	public boolean handleChunk(String packet){
-		String[] splitStr = packet.split("\\s+");
-		String[] splitStr2 = packet.split(Constants.CRLF);
+	public boolean handleChunk(byte[] packetData, int length){
+		String[] splitStr = new String(packetData, 0, length).split("\\s+");
+		String[] splitStr2 = new String(packetData, 0, length).split(Constants.CRLF);
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
 		}
 		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
 			return false;
 		}
-		System.out.println("Got chunk MSG");
+
 		//In case it's a chunk that's being sent and this is another peer that also responded with that chunk
 		if(ChunksRestSending.incrementResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
 			return true;
 		}
 
-		FileChunk chunk = new FileChunk(splitStr[3],splitStr2[2].getBytes(),Integer.parseInt(splitStr[4]),1);
+		FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length(), length -1),Integer.parseInt(splitStr[4]),1);
 		wf.storeChunk(chunk, splitStr[3]+":"+splitStr[4]);
 		ChunksStored.addNew(chunk);
 

@@ -22,12 +22,12 @@ public class ReclaimSubprotocol extends Thread {
 
         Message m = new Message();
 
-        String msg = m.removedMsg(  this.peer.peerNumber,
+        byte[] msg = m.removedMsg(  this.peer.peerNumber,
                                     this.fileid,
                                     this.chunkNo );
 
-        DatagramPacket packet = new DatagramPacket( msg.getBytes(),
-                                                    msg.getBytes().length,
+        DatagramPacket packet = new DatagramPacket( msg,
+                                                    msg.length,
                                                     this.peer.mcastMC,
                                                     this.peer.portMC);
 

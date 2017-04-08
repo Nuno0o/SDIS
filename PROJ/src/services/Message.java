@@ -1,5 +1,6 @@
 package services;
 import utilities.Constants;
+import java.io.ByteArrayOutputStream;
 public class Message {
 
   // <MessageType> <Version> <SenderId> <FileId> <ChunkNo> <ReplicationDeg> <CRLF>
@@ -10,25 +11,26 @@ public class Message {
   // <ChunkNo> - This field together with FileId specifies a chunk in the file
 
 
-  public String createHeader(String type, String version, int senderId, String fileId, int chunkNo, int repDeg){
+  public byte[] createHeader(String type, String version, int senderId, String fileId, int chunkNo, int repDeg){
 
     if (chunkNo > Constants.MAX_CHUNK_SIZE){
       System.out.println("ChunkId larger than max allowed!");
-      return "";
+      return null;
     }
 
     if (repDeg > Constants.MAX_CHUNK_SIZE){
       System.out.println("Replication Degree set to larger than max!");
-      return "";
+      return null;
     }
 
-    if (chunkNo == -1)
-      return type + ' ' + version + ' ' + senderId + ' ' + fileId + ' ' + Constants.CRLF;
+    if (chunkNo == -1){
+      return (type + ' ' + version + ' ' + senderId + ' ' + fileId + ' ' + Constants.CRLF).getBytes();
+    }
 
     if(repDeg != -1)
-      return type + ' ' + version + ' ' + senderId + ' ' + fileId + ' ' + chunkNo + ' ' + repDeg + ' ' + Constants.CRLF;
+      return (type + ' ' + version + ' ' + senderId + ' ' + fileId + ' ' + chunkNo + ' ' + repDeg + ' ' + Constants.CRLF).getBytes();
 
-    return type + ' ' + version + ' ' + senderId + ' ' + fileId + ' ' + chunkNo + ' ' + Constants.CRLF;
+    return (type + ' ' + version + ' ' + senderId + ' ' + fileId + ' ' + chunkNo + ' ' + Constants.CRLF).getBytes();
 
   }
 
@@ -38,20 +40,27 @@ public class Message {
   // -------------------------------------------------------------
   // -------------------------------------------------------------
 
-  public String putchunkMsg(int senderId, String fileId, int chunkNo, int repDeg, String body){
+  public byte[] putchunkMsg(int senderId, String fileId, int chunkNo, int repDeg, byte[] body){
 
-    if (body.length() > Constants.MAX_BODY_SIZE){
+    if (body.length > Constants.MAX_BODY_SIZE){
       System.out.println("Error! Chunk bigger than " + Constants.MAX_CHUNK_SIZE + " bytes");
-      return "";
+      return null;
     }
 
-    String header = this.createHeader("PUTCHUNK", "1.0", senderId, fileId, chunkNo, repDeg);
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
 
-    if (!header.equals("")){
-      return header + Constants.CRLF + body;
+    byte[] header = this.createHeader("PUTCHUNK", "1.0", senderId, fileId, chunkNo, repDeg);
+
+    if (!(header == null) ){
+        try {
+        outputStream.write(header);
+        outputStream.write(Constants.CRLF.getBytes());
+        outputStream.write(body);
+        return outputStream.toByteArray();
+        } catch (Exception e) {}
     }
 
-    return "";
+    return null;
   }
 
   // -------------------------------------------------------------
@@ -60,15 +69,21 @@ public class Message {
   // -------------------------------------------------------------
   // -------------------------------------------------------------
 
-  public String storedMsg(int senderId, String fileId, int chunkNo){
+  public byte[] storedMsg(int senderId, String fileId, int chunkNo){
 
-    String header = this.createHeader("STORED", "1.0", senderId, fileId, chunkNo, -1);
+    byte[] header = this.createHeader("STORED", "1.0", senderId, fileId, chunkNo, -1);
 
-    if (!header.equals("")){
-      return header + Constants.CRLF;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+
+    if (!(header == null)){
+        try {
+            outputStream.write(header);
+            outputStream.write(Constants.CRLF.getBytes());
+            return outputStream.toByteArray();
+        } catch(Exception e) {}
     }
 
-    return "";
+    return null;
   }
 
   // -------------------------------------------------------------
@@ -77,15 +92,21 @@ public class Message {
   // -------------------------------------------------------------
   // -------------------------------------------------------------
 
-  public String getchunkMsg(int senderId, String fileId, int chunkNo){
+  public byte[] getchunkMsg(int senderId, String fileId, int chunkNo){
 
-    String header = this.createHeader("GETCHUNK", "1.0", senderId, fileId, chunkNo, -1);
+    byte[] header = this.createHeader("GETCHUNK", "1.0", senderId, fileId, chunkNo, -1);
 
-    if (!header.equals("")){
-      return header + Constants.CRLF;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+
+    if (!(header == null)){
+        try {
+            outputStream.write(header);
+            outputStream.write(Constants.CRLF.getBytes());
+            return outputStream.toByteArray();
+        } catch (Exception e) {}
     }
 
-    return "";
+    return null;
   }
 
   // -------------------------------------------------------------
@@ -94,20 +115,27 @@ public class Message {
   // -------------------------------------------------------------
   // -------------------------------------------------------------
 
-  public String chunkMsg(int senderId, String fileId, int chunkNo, String body){
+  public byte[] chunkMsg(int senderId, String fileId, int chunkNo, byte[] body){
 
-    if (body.length() > Constants.MAX_BODY_SIZE){
+    if (body.length > Constants.MAX_BODY_SIZE){
       System.out.println("Error! Chunk bigger than 64KByte");
-      return "";
+      return null;
     }
 
-    String header = this.createHeader("CHUNK", "1.0", senderId, fileId, chunkNo, -1);
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
 
-    if (!header.equals("")){
-      return header + Constants.CRLF + body;
+    byte[] header = this.createHeader("CHUNK", "1.0", senderId, fileId, chunkNo, -1);
+
+    if (!(header == null)){
+        try {
+            outputStream.write(header);
+            outputStream.write(Constants.CRLF.getBytes());
+            outputStream.write(body);
+            return outputStream.toByteArray();
+        } catch (Exception e) {}
     }
 
-    return "";
+    return null;
   }
 
   // -------------------------------------------------------------
@@ -116,15 +144,21 @@ public class Message {
   // -------------------------------------------------------------
   // -------------------------------------------------------------
 
-  public String deleteMsg(int senderId, String fileId){
+  public byte[] deleteMsg(int senderId, String fileId){
 
-    String header = this.createHeader("DELETE", "1.0", senderId, fileId, -1, -1);
+    byte[] header = this.createHeader("DELETE", "1.0", senderId, fileId, -1, -1);
 
-    if (!header.equals("")){
-      return header + Constants.CRLF;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+
+    if (!(header == null)){
+        try {
+            outputStream.write(header);
+            outputStream.write(Constants.CRLF.getBytes());
+            return outputStream.toByteArray();
+        } catch (Exception e) {}
     }
 
-    return "";
+    return null;
   }
 
   // -------------------------------------------------------------
@@ -133,15 +167,21 @@ public class Message {
   // -------------------------------------------------------------
   // -------------------------------------------------------------
 
-  public String removedMsg(int senderId, String fileId, int chunkNo){
+  public byte[] removedMsg(int senderId, String fileId, int chunkNo){
 
-    String header = this.createHeader("REMOVED", "1.0", senderId, fileId, chunkNo, -1);
+    byte[] header = this.createHeader("REMOVED", "1.0", senderId, fileId, chunkNo, -1);
 
-    if (!header.equals("")){
-      return header + Constants.CRLF;
+    ByteArrayOutputStream outputStream = new ByteArrayOutputStream( );
+
+    if (!(header == null)){
+        try {
+            outputStream.write(header);
+            outputStream.write(Constants.CRLF.getBytes());
+            return outputStream.toByteArray();
+        } catch (Exception e) {}
     }
 
-    return "";
+    return null;
   }
 
 }

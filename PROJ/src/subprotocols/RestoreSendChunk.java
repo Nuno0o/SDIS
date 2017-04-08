@@ -16,7 +16,7 @@ public class RestoreSendChunk extends Thread {
     public String fileid;
     public int chunkNo;
     public String data;
-    
+
     public RestoreSendChunk (Peer peer, String fileid , int chunkNo, String data){
     	super(fileid+":"+chunkNo);
 
@@ -34,16 +34,16 @@ public class RestoreSendChunk extends Thread {
 		}catch(Exception e){
 
 		}
-    	
+
     	if(ChunksRestSending.hasResponses(this.fileid, this.chunkNo)){
     		return;
     	}
-    	
-    	Message m = new Message();
-		String chunkMsg = m.chunkMsg(this.peer.peerNumber, fileid, chunkNo, data);
 
-		DatagramPacket packet = new DatagramPacket(chunkMsg.getBytes(),
-											chunkMsg.getBytes().length,
+    	Message m = new Message();
+		byte[] chunkMsg = m.chunkMsg(this.peer.peerNumber, fileid, chunkNo, data.getBytes());
+
+		DatagramPacket packet = new DatagramPacket(chunkMsg,
+											chunkMsg.length,
 											this.peer.mcastMDR,
 											this.peer.portMDR);
 

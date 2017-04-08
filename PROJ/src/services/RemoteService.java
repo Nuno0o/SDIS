@@ -114,10 +114,12 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
       int spaceUsed = ChunksStored.getSpaceUsed();
 
-      if (spaceUsed <= kbs)
+      if (spaceUsed <= kbs){
         this.peer.storageSpace = kbs;
-
+        return;
+      }
       // else start reclaiming
+
 
   }
 

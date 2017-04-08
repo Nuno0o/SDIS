@@ -45,7 +45,7 @@ public class Chunker {
 		this.chunkRead = 0;
 	}
 
-	
+
 	public void close(){
 		try{
 			this.fis.close();
@@ -70,7 +70,6 @@ public class Chunker {
 		}
 		byte[] data2 = Arrays.copyOf(data, length);
 		data = data2;
-
 		//Create chunk
 		FileChunk chunk = new FileChunk(fileid,data,this.chunkNo,this.repDeg);
 		//Increment chunk counter

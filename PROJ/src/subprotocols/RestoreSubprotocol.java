@@ -21,12 +21,12 @@ public class RestoreSubprotocol extends Thread {
     public void run(){
 
         Message m = new Message();
-        String msg = m.getchunkMsg( this.peer.peerNumber,
+        byte[] msg = m.getchunkMsg( this.peer.peerNumber,
                                     this.fileid,
                                     this.chunkNo );
 
-        DatagramPacket packet = new DatagramPacket( msg.getBytes(),
-                                                    msg.getBytes().length,
+        DatagramPacket packet = new DatagramPacket( msg,
+                                                    msg.length,
                                                     this.peer.mcastMC,
                                                     this.peer.portMC);
 

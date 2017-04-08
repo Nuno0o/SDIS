@@ -21,10 +21,10 @@ public class DeleteSubprotocol extends Thread {
 
         Message m = new Message();
 
-        String msg = m.deleteMsg( this.peer.peerNumber, this.fileid);
+        byte[] msg = m.deleteMsg( this.peer.peerNumber, this.fileid);
 
-        DatagramPacket packet = new DatagramPacket( msg.getBytes(),
-        msg.getBytes().length,
+        DatagramPacket packet = new DatagramPacket( msg,
+        msg.length,
         this.peer.mcastMC,
         this.peer.portMC);
 

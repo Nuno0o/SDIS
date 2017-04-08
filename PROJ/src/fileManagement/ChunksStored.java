@@ -175,7 +175,6 @@ public class ChunksStored {
 
 					char[] data = new char[Constants.MAX_BODY_SIZE];
  					bufreader.read(data,0,Constants.MAX_BODY_SIZE);
-					System.out.println("Caught data.");
 					return data;
 
 				}catch(Exception e){
@@ -195,4 +194,5 @@ public class ChunksStored {
 		}
 		return retorno;
 	}
+
 }

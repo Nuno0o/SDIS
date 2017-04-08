@@ -2,21 +2,20 @@ package fileManagement;
 
 
 import java.io.IOException;
-import java.io.BufferedWriter;
-import java.io.FileWriter;
+import java.io.BufferedOutputStream;
+import java.io.FileOutputStream;
 
 public class WriteFile {
 
-    public BufferedWriter bw;
-    public FileWriter fw;
+    public BufferedOutputStream bw;
+    public FileOutputStream fw;
 
     public void storeChunk(FileChunk chunk,String name){
         // write file
-    	String data = new String(chunk.data);
         try{
-            this.fw = new FileWriter(name);
-            this.bw = new BufferedWriter(this.fw);
-            this.bw.write(data);
+            this.fw = new FileOutputStream(name);
+            this.bw = new BufferedOutputStream(this.fw);
+            this.bw.write(chunk.data);
         }  catch(IOException e) {
             System.err.println("Error storing chunk: " + e.toString());
             e.printStackTrace();
