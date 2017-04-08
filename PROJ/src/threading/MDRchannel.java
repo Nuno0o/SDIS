@@ -25,9 +25,7 @@ public class MDRchannel extends Channel {
 			try{
 				this.msocket.receive(this.packet);
 				String packetData = new String(this.packet.getData(), 0, this.packet.getLength());
-			if(!(packetmanager.handlePacket(this.packet.getData(), this.packet.getLength()))){
-					System.err.println("Error handling packet on MDR");
-				}
+			packetmanager.handlePacket(this.packet.getData(), this.packet.getLength());
 
 			}catch(Exception e){
 				System.out.println("Error receiving packet on MDR");

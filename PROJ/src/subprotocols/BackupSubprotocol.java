@@ -40,6 +40,7 @@ public class BackupSubprotocol extends Thread{
         	
 
         	ChunksSending.add(chunk);
+       
 
             Message m = new Message();
 
@@ -54,7 +55,6 @@ public class BackupSubprotocol extends Thread{
             msg.length,
             this.peer.mcastMDB,
             this.peer.portMDB);
-
             try {
                 msocket.send(packet);
             } catch (Exception e){
