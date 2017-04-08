@@ -72,7 +72,7 @@ public class Chunker {
 		data = data2;
 
 		//Create chunk
-		FileChunk chunk = new FileChunk(fileid,new String(data).getBytes(),this.chunkNo,this.repDeg);
+		FileChunk chunk = new FileChunk(fileid,data,this.chunkNo,this.repDeg);
 		//Increment chunk counter
 		chunkNo++;
 		//Increment length read
