@@ -17,13 +17,13 @@ public class ChunksSending {
 		chunks.add(new ChunkSent(c));
 	}
 
-	public static void remove(FileChunk c){
+	/*public static void remove(FileChunk c){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).c == c){
 				chunks.remove(i);
 			}
 		}
-	}
+	}*/
 
 	public static Boolean incrementResponses(String fileid, int chunkNo){
 		for(int i = 0;i < chunks.size();i++){

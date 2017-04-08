@@ -3,11 +3,12 @@ package fileManagement;
 import utilities.Constants;
 import java.io.*;
 import java.security.MessageDigest;
+import java.util.Arrays;
 
 public class Chunker {
 	//IO file variables
 	public File file;
-	public BufferedReader br;
+	public FileInputStream fis;
 	//Path to file
 	public String path;
 	//Chunk number
@@ -18,12 +19,13 @@ public class Chunker {
 	public int repDeg;
 	//File id
 	public String fileid;
+	//Constructor
 	public Chunker(String path, int repDeg){
 		try{
 			this.path = path;
 			this.repDeg = repDeg;
 			this.file = new File(path);
-			this.br = new BufferedReader(new FileReader(this.path));
+			this.fis = new FileInputStream(this.file);
 			//SHA-256 file id
 			String filename = file.getName() + ":" + System.currentTimeMillis();
 			MessageDigest md;
@@ -46,7 +48,7 @@ public class Chunker {
 	
 	public void close(){
 		try{
-			this.br.close();
+			this.fis.close();
 		}catch(Exception e){
 
 		}
@@ -54,7 +56,7 @@ public class Chunker {
 
 	public FileChunk nextChunk(){
 		//Data array
-		char[] data = new char[Constants.MAX_BODY_SIZE];
+		byte[] data = new byte[Constants.MAX_BODY_SIZE];
 		//Length read from file
 		int length = -1;
 		//Read data from file
@@ -62,17 +64,12 @@ public class Chunker {
 		System.out.println(chunkRead + " : " + chunkNo);
 
 		try{
-			length = this.br.read(data,0,Constants.MAX_BODY_SIZE);
+			length = this.fis.read(data, 0, Constants.MAX_BODY_SIZE);
 		}catch(Exception e){
 			System.out.println("Error reading file");
 		}
-		if(length < Constants.MAX_BODY_SIZE){
-			char[] data2 = new char[length];
-			for(int i = 0;i < length;i++){
-				data2[i] = data[i];
-			}
-			data = data2;
-		}
+		byte[] data2 = Arrays.copyOf(data, length);
+		data = data2;
 
 		//Create chunk
 		FileChunk chunk = new FileChunk(fileid,new String(data).getBytes(),this.chunkNo,this.repDeg);
