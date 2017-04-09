@@ -40,6 +40,8 @@ public class RestoreSubprotocol extends Thread {
                                                     this.peer.mcastMC,
                                                     this.peer.portMC);
 
+        System.out.println("Sending GetChunk: " + this.chunkNo);
+
         try {
 		  msocket.send(packet);
 		} catch (Exception e){

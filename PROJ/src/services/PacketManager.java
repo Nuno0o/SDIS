@@ -163,6 +163,9 @@ public class PacketManager extends Thread {
 	}
 
 	public boolean handleGetChunk(String packet){
+
+		System.out.println(packet);
+
 		String[] splitStr = packet.split("\\s+");
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
