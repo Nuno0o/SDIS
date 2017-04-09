@@ -63,8 +63,6 @@ public class PacketManager extends Thread {
 		String[] splitStr = new String(packetData, 0, length).split("\\s+");
 		String[] splitStr2 = new String(packetData, 0, length).split(Constants.CRLF);
 
-		System.out.println("Received " + new String(packetData).substring(0, 100));
-		
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
 		}
@@ -77,7 +75,7 @@ public class PacketManager extends Thread {
 		}
 
 		//Create new chunk out of packet
-		FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length(), length -1),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
+		FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length() + 2*Constants.CRLF.length(), length -1),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
 		//Chunk name
 		String chunkname = chunk.fileId+":"+chunk.chunkNo;
 		//Store chunk in filesystem
