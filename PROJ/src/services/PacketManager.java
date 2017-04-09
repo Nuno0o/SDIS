@@ -15,44 +15,47 @@ import java.util.Arrays;
 import java.util.ArrayList;
 import java.net.DatagramPacket;
 
-public class PacketManager {
+public class PacketManager extends Thread {
 	public Peer peer;
-	public WriteFile wf;
+	public byte [] packetData;
+	public int length;
+	//public WriteFile wf;
 
-	public PacketManager(Peer peer){
+	public PacketManager(Peer peer,byte[] packetData, int length){
 		this.peer = peer;
-		this.wf = new WriteFile();
+		this.packetData = packetData;
+		this.length = length;
 	}
 	//public boolean handlePacket(String packet){
-	public boolean handlePacket(byte[] packetData, int length){
+	public void run(){
 		String[] splitStr = new String(packetData, 0, length).split("\\s+");
 
 		String packet = new String(packetData, 0, length);
 
 		if (splitStr[0].equals("PUTCHUNK")) {
-			return handlePutChunk(packetData, length);
+			handlePutChunk(packetData, length);
 		}
 
 		if (splitStr[0].equals("GETCHUNK")){
-			return handleGetChunk(packet);
+			handleGetChunk(packet);
 		}
 
 		if (splitStr[0].equals("DELETE")){
-			return handleDelete(packet);
+			handleDelete(packet);
 		}
 
 		if (splitStr[0].equals("STORED")){
-			return handleStored(packet);
+			handleStored(packet);
 		}
 
 		if (splitStr[0].equals("CHUNK")){
-			return handleChunk(packetData, length);
+			handleChunk(packetData, length);
 		}
 
 		if (splitStr[0].equals("REMOVED")){
-			return handleRemoved(packet);
+			handleRemoved(packet);
 		}
-		return false;
+		return;
 	}
 
 	public boolean handlePutChunk(byte[] packetData, int length){
@@ -60,6 +63,8 @@ public class PacketManager {
 		String[] splitStr = new String(packetData, 0, length).split("\\s+");
 		String[] splitStr2 = new String(packetData, 0, length).split(Constants.CRLF);
 
+		System.out.println("Received " + new String(packetData).substring(0, 100));
+		
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
 		}
@@ -76,6 +81,7 @@ public class PacketManager {
 		//Chunk name
 		String chunkname = chunk.fileId+":"+chunk.chunkNo;
 		//Store chunk in filesystem
+		WriteFile wf = new WriteFile();
 		wf.storeChunk(chunk, chunkname);
 		//Add chunk to stored chunks list
 		ChunksStored.addNew(chunk);
@@ -101,6 +107,7 @@ public class PacketManager {
 		}
 
 		if(ChunksSending.incrementResponses(splitStr[3],Integer.parseInt(splitStr[4]))){
+			System.out.println("Received stored");
 			return true;
 		}
 
@@ -206,6 +213,7 @@ public class PacketManager {
 		}
 
 		FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length(), length -1),Integer.parseInt(splitStr[4]),1);
+		WriteFile wf = new WriteFile();
 		wf.storeChunk(chunk, splitStr[3]+":"+splitStr[4]);
 		ChunksStored.addNew(chunk);
 

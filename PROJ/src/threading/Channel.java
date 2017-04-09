@@ -10,7 +10,6 @@ public class Channel extends Thread {
 	public MulticastSocket msocket;
 	public byte[] buffer;
 	public DatagramPacket packet;
-	public PacketManager packetmanager;
 
 	public Channel(Peer p){
 		super("Peer" + p.peerNumber);
@@ -23,7 +22,6 @@ public class Channel extends Thread {
 
 		this.packet = new DatagramPacket(this.buffer,Constants.MAX_BUFFER_SIZE);
 
-		this.packetmanager = new PacketManager(this.peer);
 	}
 	
 	public synchronized void writeToMulticast(DatagramPacket p){
