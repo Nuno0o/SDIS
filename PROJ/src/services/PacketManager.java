@@ -121,6 +121,13 @@ public class PacketManager extends Thread {
 			System.out.println("Received stored chunk #" + splitStr[4]);
 			return true;
 		}
+		
+		try{
+        	Thread.sleep(Constants.ONE_SECOND);
+        }catch(Exception e){
+        	System.err.println("Exception: " + e.toString());
+            e.printStackTrace();
+        }
 
 		if(ChunksStored.incDegree(splitStr[3],Integer.parseInt(splitStr[4]))){
 			return true;
