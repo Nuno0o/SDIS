@@ -10,6 +10,7 @@ import subprotocols.DeleteSubprotocol;
 import subprotocols.RestoreSubprotocol;
 import subprotocols.ReclaimSubprotocol;
 import utilities.Constants;
+import utilities.RandomDelay;
 
 import java.util.TreeMap;
 import java.rmi.server.UnicastRemoteObject;
@@ -110,6 +111,11 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
               this.restoreSubprotocol = new RestoreSubprotocol(this.peer, fileid, currentChunk);
               this.restoreSubprotocol.start();
               currentChunk++;
+              try{
+      			Thread.sleep(5);
+      		}catch(Exception e){
+
+      		}
           }
       } catch(Exception e){
           System.err.println("Couldn't execute restore subprotocol");

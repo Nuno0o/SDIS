@@ -18,13 +18,13 @@ public class ChunksSending {
 		chunks.add(sent);
 	}
 
-	/*public static void remove(FileChunk c){
+	public static void remove(FileChunk c){
 		for(int i = 0;i < chunks.size();i++){
 			if(chunks.get(i).c == c){
 				chunks.remove(i);
 			}
 		}
-	}*/
+	}
 
 	public synchronized static Boolean incrementResponses(String fileid, int chunkNo){
 		for(int i = 0;i < chunks.size();i++){
@@ -42,10 +42,11 @@ public class ChunksSending {
 				boolean ret = false;
 				if(chunks.get(i).nConfirmations >= c.repDeg)
 					ret = true;
-				chunks.remove(i);
+				
 				return ret;
 			}
 		}
+		System.out.println("Didnt find");
 		return false;
 	}
 }

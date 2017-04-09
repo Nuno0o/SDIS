@@ -29,14 +29,6 @@ public class RestoreSubprotocol extends Thread {
 
 		}
 
-        MulticastSocket msocket = null;
-    	try{
-    		msocket = new MulticastSocket(this.peer.portMC);
-    		msocket.joinGroup(this.peer.mcastMC);
-    	}catch(Exception e){
-
-    	}
-
         Message m = new Message();
         byte[] msg = m.getchunkMsg( this.peer.peerNumber,
                                     this.fileid,
@@ -50,17 +42,11 @@ public class RestoreSubprotocol extends Thread {
         System.out.println("Sending GetChunk: " + this.chunkNo);
 
         try {
-		  msocket.send(packet);
+        	this.peer.MC.writeToMulticast(packet);
 		} catch (Exception e){
 			System.err.println("Errror sending getchunk message");
 			e.printStackTrace();
 		}
-
-        try{
-        	msocket.close();
-        }catch(Exception e){
-
-        }
 
 
         // Wait for CHUNK messages

@@ -15,6 +15,7 @@ import subprotocols.BackupSubprotocol;
 import java.util.Arrays;
 import java.util.ArrayList;
 import java.net.DatagramPacket;
+import java.net.MulticastSocket;
 
 public class PacketManager extends Thread {
 	public Peer peer;
@@ -63,6 +64,7 @@ public class PacketManager extends Thread {
 
 		String[] splitStr = new String(packetData, 0, length).split("\\s+");
 		String[] splitStr2 = new String(packetData, 0, length).split(Constants.CRLF);
+		
 
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return false;
@@ -70,7 +72,12 @@ public class PacketManager extends Thread {
 		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
 			return false;
 		}
-
+		//Para caso de mensagem repetida e store já foi enviado
+		if(ChunksStored.containsChunk(splitStr[3], Integer.parseInt(splitStr[4]))){
+			return true;
+		}
+		System.out.println("Received chunk #" + splitStr[4]);
+		//Verificar se há espao
 		if (length > (this.peer.storageSpace - ChunksStored.getSpaceUsed())){
 			System.out.println("Couldn't store chunk: not enough space!");
 			return false;
@@ -78,7 +85,7 @@ public class PacketManager extends Thread {
 		else {
 			this.peer.storageSpace -= length;
 		}
-
+		//Incrementar
 		if(PutchunksSending.incrementResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
 			return true;
 		}
@@ -88,8 +95,8 @@ public class PacketManager extends Thread {
 		//Chunk name
 		String chunkname = chunk.fileId+":"+chunk.chunkNo;
 		//Store chunk in filesystem
-		WriteFile wf = new WriteFile();
-		wf.storeChunk(chunk, chunkname);
+		new WriteFile(chunk,chunkname).run();
+		
 		//Add chunk to stored chunks list
 		ChunksStored.addNew(chunk);
 		//Sleep between 0 and 400 ms
@@ -114,7 +121,7 @@ public class PacketManager extends Thread {
 		}
 
 		if(ChunksSending.incrementResponses(splitStr[3],Integer.parseInt(splitStr[4]))){
-			System.out.println("Received stored");
+			System.out.println("Received stored chunk #" + splitStr[4]);
 			return true;
 		}
 
@@ -130,16 +137,29 @@ public class PacketManager extends Thread {
 
 		byte[] stored = m.storedMsg(this.peer.peerNumber, chunk.fileId, chunk.chunkNo);
 
+		MulticastSocket msocket = null;
+    	try{
+    		msocket = new MulticastSocket(this.peer.portMC);
+    		msocket.joinGroup(this.peer.mcastMC);
+    	}catch(Exception e){
+    		
+    	}
+		
 		DatagramPacket packet = new DatagramPacket( stored,
 	            stored.length,
 	            this.peer.mcastMC,
 	            this.peer.portMC);
 		try{
-			this.peer.MC.msocket.send(packet);
+			msocket.send(packet);
 		}catch(Exception e){
 				System.out.println("Error sending stored msg");
 		}
-
+		System.out.println("Sent stored #" + chunk.chunkNo);
+		try{
+			msocket.close();
+		}catch(Exception e){
+    		
+    	}
 		return true;
 	}
 
@@ -223,9 +243,8 @@ public class PacketManager extends Thread {
 
 
 			FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length(), length -1),Integer.parseInt(splitStr[4]),1);
-			WriteFile wf = new WriteFile();
 			String path = splitStr[3]+":"+splitStr[4];
-			wf.storeChunk(chunk, path);
+			new WriteFile(chunk,path).run();
 			FileRestoring.addReceived(Integer.parseInt(splitStr[4]),path);
 			return true;
 		}

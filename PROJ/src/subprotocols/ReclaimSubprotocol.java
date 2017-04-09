@@ -32,8 +32,8 @@ public class ReclaimSubprotocol extends Thread {
                                                     this.peer.portMC);
 
         try {
-            this.peer.MC.msocket.send(packet);
-        } catch (IOException e){
+            this.peer.MC.writeToMulticast(packet);
+        } catch (Exception e){
             System.err.println("RestoreSubprotocol Exception. Couldn't send packet. " + e.toString());
             e.printStackTrace();
         }

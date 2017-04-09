@@ -31,7 +31,7 @@ public class DeleteSubprotocol extends Thread {
         try {
         	int NTries = Constants.MAX_TRIES;
         	while(NTries > 0){
-        		this.peer.MDB.msocket.send(packet);
+        		this.peer.MDB.writeToMulticast(packet);
         		NTries--;
         		Thread.sleep(300);
         	}

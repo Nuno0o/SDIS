@@ -5,6 +5,7 @@ import services.Message;
 import fileManagement.ChunksSending;
 import fileManagement.FileChunk;
 import utilities.Constants;
+import utilities.RandomDelay;
 
 import java.io.IOException;
 import java.net.DatagramPacket;
@@ -27,20 +28,12 @@ public class BackupSubprotocol extends Thread{
     }
 
     public void run(){
-    	MulticastSocket msocket = null;
-    	try{
-    		msocket = new MulticastSocket(this.peer.portMDB);
-    		msocket.joinGroup(this.peer.mcastMDB);
-    	}catch(Exception e){
-    		
-    	}
-
+    	ChunksSending.add(chunk);
         int tries = Constants.MAX_TRIES;
+       
         while(tries > Constants.ZERO_TRIES){
         	
-
-        	ChunksSending.add(chunk);
-       
+        	
 
             Message m = new Message();
 
@@ -55,14 +48,22 @@ public class BackupSubprotocol extends Thread{
             msg.length,
             this.peer.mcastMDB,
             this.peer.portMDB);
+            try{
+            	Thread.sleep(RandomDelay.getRandomDelay()/2);
+            }catch(Exception e){
+            	System.err.println("Exception: " + e.toString());
+                e.printStackTrace();
+            }
+            
             try {
-            	System.out.println("Sent " + new String(msg).substring(0,100));
-                msocket.send(packet);
+            	System.out.println("Sent chunk #" + this.chunk.chunkNo);
+                this.peer.MDB.writeToMulticast(packet);
             } catch (Exception e){
                 System.err.println("BackupSubprotocol Exception. Couldn't send packet. " + e.toString());
                 e.printStackTrace();
             }
 
+            
             try{
             	Thread.sleep(Constants.ONE_SECOND);
             }catch(Exception e){
@@ -71,17 +72,15 @@ public class BackupSubprotocol extends Thread{
             }
 
             if(ChunksSending.hasEnoughResponses(chunk)){
+            	System.out.println("Successfully stored chunk #" + this.chunk.chunkNo);
             	break;
             }else{
+            	
             	tries--;
             	continue;
             }
         }
-        try{
-        	msocket.close();
-        }catch(Exception e){
-        	
-        }
+        ChunksSending.remove(chunk);
         
     }
 }
