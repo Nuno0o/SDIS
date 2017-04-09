@@ -118,7 +118,7 @@ public class Message {
   public byte[] chunkMsg(int senderId, String fileId, int chunkNo, byte[] body){
 
     if (body.length > Constants.MAX_BODY_SIZE){
-      System.out.println("Error! Chunk bigger than 64KByte");
+      System.out.println("Error! Chunk bigger than 64KByte: " + body.length);
       return null;
     }
 

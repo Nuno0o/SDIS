@@ -2,11 +2,7 @@ package fileManagement;
 
 import utilities.Constants;
 
-import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileReader;
-import java.io.FileWriter;
-import java.io.PrintWriter;
+import java.io.*;
 import java.util.TreeMap;
 import java.util.ArrayList;
 
@@ -189,17 +185,15 @@ public class ChunksStored {
 		return toReturn;
 	}
 
-	public synchronized static char[] getChunkData(String fileid, int chunkNo){
+	public synchronized static byte[] getChunkData(String fileid, int chunkNo){
 		load();
 		for(int i = 0;i < list.size();i++){
 			System.out.println(list.get(i).fileid + ":" + list.get(i).chunkNo);
 			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid) && list.get(i).chunkNo == chunkNo){
 				try{
-					FileReader reader = new FileReader(new String(fileid+":"+chunkNo));
-					BufferedReader bufreader = new BufferedReader(reader);
-
-					char[] data = new char[Constants.MAX_BODY_SIZE];
- 					bufreader.read(data,0,Constants.MAX_BODY_SIZE);
+					FileInputStream reader = new FileInputStream(new String(fileid+":"+chunkNo));
+					byte[] data = new byte[Constants.MAX_BODY_SIZE];
+	 				reader.read(data, 0, Constants.MAX_BODY_SIZE);
 					return data;
 
 				}catch(Exception e){

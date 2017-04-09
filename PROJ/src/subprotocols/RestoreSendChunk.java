@@ -11,13 +11,15 @@ import services.Peer;
 import utilities.Constants;
 import utilities.RandomDelay;
 
+import java.net.MulticastSocket;
+
 public class RestoreSendChunk extends Thread {
 	public Peer peer;
     public String fileid;
     public int chunkNo;
-    public String data;
+    public byte[] data;
 
-    public RestoreSendChunk (Peer peer, String fileid , int chunkNo, String data){
+    public RestoreSendChunk (Peer peer, String fileid , int chunkNo, byte[] data){
     	super(fileid+":"+chunkNo);
 
         this.peer = peer;
@@ -25,6 +27,8 @@ public class RestoreSendChunk extends Thread {
         this.fileid = fileid;
         this.chunkNo = chunkNo;
         this.data = data;
+
+		System.out.println("Data Size: " + data.length);
 
     }
 
@@ -39,8 +43,16 @@ public class RestoreSendChunk extends Thread {
     		return;
     	}
 
+		MulticastSocket msocket = null;
+    	try{
+    		msocket = new MulticastSocket(this.peer.portMDR);
+    		msocket.joinGroup(this.peer.mcastMDR);
+    	}catch(Exception e){
+
+    	}
+
     	Message m = new Message();
-		byte[] chunkMsg = m.chunkMsg(this.peer.peerNumber, fileid, chunkNo, data.getBytes());
+		byte[] chunkMsg = m.chunkMsg(this.peer.peerNumber, fileid, chunkNo, data);
 
 		DatagramPacket packet = new DatagramPacket(chunkMsg,
 											chunkMsg.length,
@@ -48,11 +60,18 @@ public class RestoreSendChunk extends Thread {
 											this.peer.portMDR);
 
 		try {
-			this.peer.MDR.msocket.send(packet);
+		  msocket.send(packet);
 		} catch (Exception e){
 			System.err.println("Errror sending chunk message");
 			e.printStackTrace();
 		}
+
+
+        try{
+        	msocket.close();
+        }catch(Exception e){
+
+        }
 
 		return;
     }

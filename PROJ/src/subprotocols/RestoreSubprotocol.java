@@ -6,6 +6,8 @@ import services.Message;
 import java.io.IOException;
 import java.net.DatagramPacket;
 
+import java.net.MulticastSocket;
+
 public class RestoreSubprotocol extends Thread {
 
     public Peer peer;
@@ -20,6 +22,14 @@ public class RestoreSubprotocol extends Thread {
 
     public void run(){
 
+        MulticastSocket msocket = null;
+    	try{
+    		msocket = new MulticastSocket(this.peer.portMC);
+    		msocket.joinGroup(this.peer.mcastMC);
+    	}catch(Exception e){
+
+    	}
+
         Message m = new Message();
         byte[] msg = m.getchunkMsg( this.peer.peerNumber,
                                     this.fileid,
@@ -31,11 +41,18 @@ public class RestoreSubprotocol extends Thread {
                                                     this.peer.portMC);
 
         try {
-            this.peer.MC.msocket.send(packet);
-        } catch (IOException e){
-            System.err.println("RestoreSubprotocol Exception. Couldn't send packet. " + e.toString());
-            e.printStackTrace();
+		  msocket.send(packet);
+		} catch (Exception e){
+			System.err.println("Errror sending getchunk message");
+			e.printStackTrace();
+		}
+
+        try{
+        	msocket.close();
+        }catch(Exception e){
+
         }
+
 
         // Wait for CHUNK messages
 

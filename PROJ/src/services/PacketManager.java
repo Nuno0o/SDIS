@@ -178,9 +178,9 @@ public class PacketManager extends Thread {
 		System.out.println(storedChunksForFile.toString());
 
 		if (storedChunksForFile.contains(fileId+":"+splitStr[4])){
-			String data = new String(ChunksStored.getChunkData(fileId, Integer.parseInt(splitStr[4])));
 			try{
-				RestoreSendChunk r = new RestoreSendChunk(this.peer,fileId,Integer.parseInt(splitStr[4]),data);
+				System.out.println("Starting restore: " + fileId + ":" + splitStr[4]);
+				RestoreSendChunk r = new RestoreSendChunk(this.peer,fileId,Integer.parseInt(splitStr[4]),ChunksStored.getChunkData(fileId, Integer.parseInt(splitStr[4])));
 				r.start();
 			}catch(Exception e){
 
@@ -220,8 +220,8 @@ public class PacketManager extends Thread {
 		}
 
 		if(FileRestoring.fileid.equals(splitStr[3])){
-			
-		
+
+
 			FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length(), length -1),Integer.parseInt(splitStr[4]),1);
 			WriteFile wf = new WriteFile();
 			String path = splitStr[3]+":"+splitStr[4];
