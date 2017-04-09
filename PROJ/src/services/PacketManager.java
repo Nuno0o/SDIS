@@ -136,30 +136,17 @@ public class PacketManager extends Thread {
 		Message m = new Message();
 
 		byte[] stored = m.storedMsg(this.peer.peerNumber, chunk.fileId, chunk.chunkNo);
-
-		MulticastSocket msocket = null;
-    	try{
-    		msocket = new MulticastSocket(this.peer.portMC);
-    		msocket.joinGroup(this.peer.mcastMC);
-    	}catch(Exception e){
-    		
-    	}
 		
 		DatagramPacket packet = new DatagramPacket( stored,
 	            stored.length,
 	            this.peer.mcastMC,
 	            this.peer.portMC);
 		try{
-			msocket.send(packet);
+			this.peer.MC.writeToMulticast(packet);
 		}catch(Exception e){
 				System.out.println("Error sending stored msg");
 		}
 		System.out.println("Sent stored #" + chunk.chunkNo);
-		try{
-			msocket.close();
-		}catch(Exception e){
-    		
-    	}
 		return true;
 	}
 
