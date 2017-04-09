@@ -33,15 +33,18 @@ public class RestoreSendChunk extends Thread {
     }
 
     public void run(){
+    	
     	try{
 			Thread.sleep(RandomDelay.getRandomDelay());
 		}catch(Exception e){
 
 		}
-
+    	
     	if(ChunksRestSending.hasResponses(this.fileid, this.chunkNo)){
+    		ChunksRestSending.remove(this.fileid, this.chunkNo);
     		return;
     	}
+    	ChunksRestSending.remove(this.fileid, this.chunkNo);
 
 		MulticastSocket msocket = null;
     	try{

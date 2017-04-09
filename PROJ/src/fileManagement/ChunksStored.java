@@ -172,17 +172,14 @@ public class ChunksStored {
 		}
 		return false;
 	}
-
-	// Returns chunks for a given file
-	public synchronized static ArrayList<String> getChunksStored(String fileid){
-		load();
-		ArrayList<String> toReturn = new ArrayList<String>();
-		for(int i = 0;i < list.size();i++){
-			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
-				toReturn.add(list.get(i).fileid + ":" + list.get(i).chunkNo);
+	
+	public synchronized static boolean containsChunk(String fileid,int chunkNo){
+		for (int i = 0; i < list.size(); i++){
+			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid) && list.get(i).chunkNo == chunkNo){
+				return true;
 			}
 		}
-		return toReturn;
+		return false;
 	}
 
 	public synchronized static byte[] getChunkData(String fileid, int chunkNo){

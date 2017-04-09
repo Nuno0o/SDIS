@@ -175,13 +175,10 @@ public class PacketManager extends Thread {
 		}
 
 		String fileId = splitStr[3];
-
-		ArrayList<String> storedChunksForFile = ChunksStored.getChunksStored(fileId);
-
-		System.out.println(storedChunksForFile.toString());
-
-		if (storedChunksForFile.contains(fileId+":"+splitStr[4])){
+		
+		if (ChunksStored.containsChunk(fileId,Integer.parseInt(splitStr[4]))){
 			try{
+				ChunksRestSending.add(fileId, Integer.parseInt(splitStr[4]));
 				System.out.println("Starting restore: " + fileId + ":" + splitStr[4]);
 				RestoreSendChunk r = new RestoreSendChunk(this.peer,fileId,Integer.parseInt(splitStr[4]),ChunksStored.getChunkData(fileId, Integer.parseInt(splitStr[4])));
 				r.start();

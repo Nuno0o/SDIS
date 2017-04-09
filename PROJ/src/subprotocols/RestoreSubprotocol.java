@@ -1,6 +1,7 @@
 package subprotocols;
 
 import services.Peer;
+import utilities.RandomDelay;
 import services.Message;
 
 import java.io.IOException;
@@ -21,6 +22,12 @@ public class RestoreSubprotocol extends Thread {
     }
 
     public void run(){
+    	
+    	try{
+			Thread.sleep(RandomDelay.getRandomDelay());
+		}catch(Exception e){
+
+		}
 
         MulticastSocket msocket = null;
     	try{
