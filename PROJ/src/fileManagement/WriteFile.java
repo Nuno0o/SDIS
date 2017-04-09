@@ -16,6 +16,7 @@ public class WriteFile {
             this.fw = new FileOutputStream(name);
             this.bw = new BufferedOutputStream(this.fw);
             this.bw.write(chunk.data);
+
         }  catch(IOException e) {
             System.err.println("Error storing chunk: " + e.toString());
             e.printStackTrace();
