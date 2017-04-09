@@ -20,7 +20,7 @@ public class FileRestoring {
 	public static Hashtable<Integer,String> chunksReceived;
 	//check if file was restored
 	public static boolean restored;
-	
+
 	public static void init(String fileid,String path,int nchunks){
 		FileRestoring.fileid = fileid;
 		FileRestoring.path = path;
@@ -28,38 +28,38 @@ public class FileRestoring {
 		FileRestoring.chunksReceived = new Hashtable<Integer,String>();
 		FileRestoring.restored = false;
 	}
-	
+
 	public synchronized static void addReceived(int chunkNo,String path){
 		chunksReceived.put(chunkNo, path);
 		if(checkComplete() && restored == false){
 			FileRestoring.restore();
 		}
 	}
-	
+
 	public synchronized static void restore(){
 		DataOutputStream os = null;
 		try{
 			os = new DataOutputStream(new FileOutputStream(path));
 		}catch(Exception e){
-			
+
 		}
-		
+
 		for(int i = 0;i < nchunks;i++){
 			byte[] data = loadFromFile(chunksReceived.get(i));
 			try{
 				os.write(data);
 			}catch(Exception e){
-				
+
 			}
 		}
 		try{
 			os.close();
 		}catch(Exception e){
-			
+
 		}
 		restored = true;
 	}
-	
+
 	public synchronized static boolean checkComplete(){
 		for(int i = 0;i < nchunks;i++){
 			if(chunksReceived.get(i) == null){
@@ -68,16 +68,16 @@ public class FileRestoring {
 		}
 		return true;
 	}
-	
+
 	public static byte[] loadFromFile(String path){
 		Path pathd = Paths.get(path);
 		byte[] data = null;
 		try{
 			data = Files.readAllBytes(pathd);
 		}catch(Exception e){
-			
+
 		}
-		
+
 		return data;
 	}
 }

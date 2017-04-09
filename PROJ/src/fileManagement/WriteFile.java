@@ -8,10 +8,10 @@ import java.io.FileOutputStream;
 
 public class WriteFile extends Thread {
 
-    public DataOutputStream bw;
+    public BufferedOutputStream bw;
     FileChunk chunk;
     String name;
-    
+
     public WriteFile(FileChunk chunk,String name){
     	this.chunk = chunk;
     	this.name = name;
@@ -20,7 +20,7 @@ public class WriteFile extends Thread {
     public void run(){
         // write file
         try{
-            this.bw = new DataOutputStream(new FileOutputStream(name));
+            this.bw = new BufferedOutputStream(new FileOutputStream(name));
             this.bw.write(chunk.data);
             this.bw.flush();
 
