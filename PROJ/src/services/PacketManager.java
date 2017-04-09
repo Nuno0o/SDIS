@@ -77,13 +77,10 @@ public class PacketManager extends Thread {
 			return true;
 		}
 		System.out.println("Received chunk #" + splitStr[4]);
-		//Verificar se h espao
+		//Verificar se ha espaço
 		if (length > (this.peer.storageSpace - ChunksStored.getSpaceUsed())){
 			System.out.println("Couldn't store chunk: not enough space!");
 			return false;
-		}
-		else {
-			this.peer.storageSpace -= length;
 		}
 		//Incrementar
 		if(PutchunksSending.incrementResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
