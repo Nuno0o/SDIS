@@ -2,6 +2,7 @@ package services;
 
 import fileManagement.Chunker;
 import fileManagement.FileChunk;
+import fileManagement.FileRestoring;
 import fileManagement.ChunksStored;
 import fileManagement.Metadata;
 import subprotocols.BackupSubprotocol;
@@ -86,7 +87,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
           int noChunks = Metadata.findFileNoChunks(path);
 
           if (noChunks < 0) {
-              System.out.println("File not found?");
+              System.out.println("File not found");
               return;
           }
 
@@ -96,7 +97,10 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
               System.out.println("This file hasn't been backed up.");
               return;
           }
-
+          
+          FileRestoring.init(fileid, path, noChunks);
+          
+          //Create threads that will request the chunks
           int currentChunk = 0;
 
           while (currentChunk < noChunks)

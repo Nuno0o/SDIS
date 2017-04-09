@@ -4,6 +4,7 @@ import fileManagement.ChunksRestSending;
 import fileManagement.ChunksSending;
 import fileManagement.ChunksStored;
 import fileManagement.FileChunk;
+import fileManagement.FileRestoring;
 import fileManagement.WriteFile;
 import fileManagement.PutchunksSending;
 import subprotocols.RestoreSendChunk;
@@ -212,12 +213,18 @@ public class PacketManager extends Thread {
 			return true;
 		}
 
-		FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length(), length -1),Integer.parseInt(splitStr[4]),1);
-		WriteFile wf = new WriteFile();
-		wf.storeChunk(chunk, splitStr[3]+":"+splitStr[4]);
-		ChunksStored.addNew(chunk);
+		if(FileRestoring.fileid.equals(splitStr[3])){
+			
+		
+			FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length(), length -1),Integer.parseInt(splitStr[4]),1);
+			WriteFile wf = new WriteFile();
+			String path = splitStr[3]+":"+splitStr[4];
+			wf.storeChunk(chunk, path);
+			FileRestoring.addReceived(Integer.parseInt(splitStr[4]),path);
+			return true;
+		}
 
-		return true;
+		return false;
 	}
 
 	public boolean handleRemoved(String packet){
