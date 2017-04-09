@@ -7,6 +7,7 @@ import java.io.File;
 import java.io.FileReader;
 import java.io.FileWriter;
 import java.io.PrintWriter;
+import java.util.TreeMap;
 import java.util.ArrayList;
 
 public class ChunksStored {
@@ -123,6 +124,30 @@ public class ChunksStored {
 		return ret;
 	}
 
+	//Returns true if at least 1 chunk has been deleted
+	public synchronized static boolean deleteChunk(String fileid, int chunkNo){
+		load();
+		boolean ret = false;
+		for(int i = 0;i < list.size();i++){
+			System.out.println(list.get(i).fileid + ":" + list.get(i).chunkNo);
+			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
+				if (list.get(i).realRepDegree - list.get(i).RepDegree > 0){
+					try{
+						File f = new File(list.get(i).filehash);
+						f.delete();
+						ret = true;
+						list.remove(i);
+						i--;
+					}catch(Exception e){
+
+					}
+				}
+			}
+		}
+		store();
+		return ret;
+	}
+
 	public synchronized static boolean decRepDeg(String fileid, int chunkNo){
 		load();
 		boolean success = false;
@@ -193,6 +218,20 @@ public class ChunksStored {
 			retorno += new File(list.get(i).fileid+":"+list.get(i).chunkNo).length();
 		}
 		return retorno;
+	}
+
+	public static synchronized TreeMap<String, Integer> getOrderedRepDegs(){
+		load();
+		TreeMap<String, Integer> map = new TreeMap<String, Integer>();
+
+		for (int i = 0; i < list.size(); i++){
+			map.put(list.get(i).fileid+":"+list.get(i).chunkNo, list.get(i).realRepDegree - list.get(i).RepDegree);
+		}
+
+		if (map.size() == 0) return null;
+
+		return map;
+
 	}
 
 }

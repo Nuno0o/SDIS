@@ -7,8 +7,10 @@ import fileManagement.Metadata;
 import subprotocols.BackupSubprotocol;
 import subprotocols.DeleteSubprotocol;
 import subprotocols.RestoreSubprotocol;
+import subprotocols.ReclaimSubprotocol;
 import utilities.Constants;
 
+import java.util.TreeMap;
 import java.rmi.server.UnicastRemoteObject;
 import java.rmi.RemoteException;
 
@@ -114,12 +116,34 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
       int spaceUsed = ChunksStored.getSpaceUsed();
 
+      System.out.println("Storage space: " + this.peer.storageSpace + "; used: " + spaceUsed);
+
       if (spaceUsed <= kbs){
+          System.out.println("setting storage from: " + this.peer.storageSpace + " to " + kbs);
         this.peer.storageSpace = kbs;
         return;
       }
       // else start reclaiming
 
+      TreeMap<String, Integer> map = ChunksStored.getOrderedRepDegs();
+
+      if (map == null) return;
+      System.out.println("Mapsize: " + map.size());
+
+      int tries = 5;
+      while (tries != 0){
+          if (map.lastEntry().getValue() > 0){
+              String[] splitStr = map.lastEntry().getKey().split(":");
+              if (ChunksStored.deleteChunk(splitStr[0], Integer.parseInt(splitStr[1]))){
+                  new ReclaimSubprotocol(this.peer, splitStr[0], Integer.parseInt(splitStr[1])).start();
+                  System.out.println("Removed: " + splitStr[0] + ":" + splitStr[1]);
+                  if (ChunksStored.getSpaceUsed() < kbs) return;
+              }
+          }
+          tries--;
+      }
+
+      System.out.println("Couldn't reclaim.");
 
   }
 
