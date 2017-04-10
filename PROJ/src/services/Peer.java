@@ -44,7 +44,6 @@ public class Peer {
 		this.remote_name = args[2];
 		Metadata.filename = "metadata" + this.peerNumber + ".txt";
 		ChunksStored.filename = "storedchunks" + this.peerNumber + ".txt";
-		System.out.println(ChunksStored.filename);
 		//Set multicast channels ips and ports
 		try{
 			this.mcastMC = InetAddress.getByName(args[3]);
@@ -61,6 +60,9 @@ public class Peer {
 			this.MDR = new MDRchannel(this);
 
 			this.storageSpace = Constants.MAX_PEER_SIZE;
+
+			System.out.println("Booted up peer " + this.peerNumber);
+
 		}catch(Exception e){
 			System.out.println("Couldn't open all channels...");
 			System.exit(1);
@@ -80,17 +82,22 @@ public class Peer {
 			try {
 				Registry registry = LocateRegistry.getRegistry();
 				registry.bind(this.remote_name, remoteService);
+
 			} catch (AlreadyBoundException e) {
 				System.err.println("Already bound: " + e.toString());
 			}
 
-			System.out.println("Remote Object Created");
+			System.out.println("Bound successfully to RMIREGISTRY");
 
 		} catch (Exception e){
 			System.err.println("Peer exception on remote try:" + e.toString());
 			e.printStackTrace();
 		}
 
+	}
+
+	public int getSpaceUsed() {
+		return ChunksStored.getSpaceUsed();
 	}
 
 }

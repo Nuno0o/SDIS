@@ -3,6 +3,7 @@ package services;
 import java.io.Serializable;
 import java.util.ArrayList;
 
+import services.Peer;
 import fileManagement.ChunksStored;
 import fileManagement.Metadata;
 
@@ -16,6 +17,7 @@ public class State implements Serializable {
 
 	public Integer peerNumber;
 	public Integer maxSize;
+	public Integer spaceUsed;
 
 	public State(Peer p){
 		filepath = Metadata.getMetadPaths();
@@ -27,6 +29,7 @@ public class State implements Serializable {
 
 		maxSize = p.storageSpace;
 		peerNumber = p.peerNumber;
+		spaceUsed = p.getSpaceUsed();
 	}
 
 	public void display(){
@@ -36,7 +39,7 @@ public class State implements Serializable {
 		System.out.println("   -----------------------------------------------------------------");
 		System.out.println("   ---");
 		System.out.println("   --->        Max Storage Space: " + maxSize + " bytes ");
-		System.out.println("   --->        Currently Used: " + ChunksStored.getSpaceUsed() + " bytes (" + ChunksStored.getSpaceUsed() / maxSize + "% used)");
+		System.out.println("   --->        Currently Used: " + spaceUsed + " bytes (" + (float) (spaceUsed * 1.0 / maxSize) * 100+ "% used)");
 		System.out.println("   ---");
 
 		if (filepath.size() == 0){

@@ -30,11 +30,12 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
   // The method that implements the backup.
   public void backup(String path, int repDeg){
 
-      System.out.println("Backing up file in :" + path);
+      System.out.println("\n\nBacking up file in :" + path + " \n.\n.\n.\n");
 
       this.chunker = new Chunker(path,repDeg);
-      
+
       if(chunker.failedToOpen()){
+          System.out.println("Failed to open chunker! \n");
     	  return;
       }
 
@@ -43,13 +44,6 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       Metadata.saveMetadata(path,chunker.fileid);
 
       while (currentChunk != null) {
-
-          System.out.println("Im here");
-
-          if (currentChunk.getSpace() > (this.peer.storageSpace - ChunksStored.getSpaceUsed())){
-              System.out.println("Couldn't store chunk: not enough space!");
-              break;
-          }
 
           new BackupSubprotocol(this.peer, currentChunk, repDeg).start();
 
@@ -60,27 +54,29 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
       }
       this.chunker.close();
+
+      System.out.println("Started BackupSubprotocol, everything operational!\n");
   }
 
   // The method that implements the deleting of chunks.
   public void delete(String path) {
       try {
-          System.out.println("Deleting file in :" + path);
+          System.out.println("Deleting file in :" + path + "\n.\n.\n.\n");
 
           String fileid = Metadata.findMetadata(path);
 
-          System.out.println("Found fileID: " + fileid);
-
           if(fileid == null){
-        	  System.out.println("This file hasn't been backed up");
+        	  System.out.println("Specified file hasn't been backed up...! \n");
         	  return;
           }
 
           this.deleteSubprotocol = new DeleteSubprotocol(this.peer,fileid);
           this.deleteSubprotocol.start();
 
+          System.out.println("Started DeleteSubprotocol, everything operational.");
+
       } catch(Exception e){
-    	  System.out.println("Couldn't execute delete protocol");
+    	  System.out.println("Couldn't execute delete protocol. \n");
       }
 
   }
@@ -88,20 +84,20 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
   // The method that implements the restoring of chunks.
   public void restore(String path) {
       try {
-          System.out.println("Trying to restore file: " + path);
+          System.out.println("Trying to restore file: " + path + "\n.\n.\n.\n");
 
           String fileid = Metadata.findMetadata(path);
           int noChunks = Metadata.findFileNoChunks(path);
 
           if (noChunks < 0) {
-              System.out.println("File not found");
+              System.out.println("Specified file not found! Backing off...");
               return;
           }
 
           System.out.println("Found fileID: " + fileid + " \nwith " + noChunks + " chunks.");
 
           if (fileid == null){
-              System.out.println("This file hasn't been backed up.");
+              System.out.println("Specified file not found! Backing off...");
               return;
           }
 
@@ -122,7 +118,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       		}
           }
       } catch(Exception e){
-          System.err.println("Couldn't execute restore subprotocol");
+          System.err.println("Couldn't execute restore subprotocol! \n");
       }
   }
 
@@ -130,11 +126,11 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
       int spaceUsed = ChunksStored.getSpaceUsed();
 
-      System.out.println("Storage space: " + this.peer.storageSpace + "; used: " + spaceUsed);
+      System.out.println("Trying to set storage space to " + kbs + " KBs from " + this.peer.storageSpace + ", percentage used: " +(float) (spaceUsed * 1.0 / this.peer.storageSpace) * 100);
 
       if (spaceUsed <= kbs){
-          System.out.println("setting storage from: " + this.peer.storageSpace + " to " + kbs);
         this.peer.storageSpace = kbs;
+        System.out.println("Storage Limit imposed successfully.\n");
         return;
       }
       // else start reclaiming
@@ -142,11 +138,9 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       TreeMap<String, Integer> map = ChunksStored.getOrderedRepDegs();
 
       if (map == null) return;
-      System.out.println("Mapsize: " + map.size());
 
       int tries = 5;
       while (tries != 0){
-          System.out.println(map.lastEntry());
               String[] splitStr = map.lastEntry().getKey().split(":");
               ChunksStored.deleteChunk(splitStr[0], Integer.parseInt(splitStr[1]));
               new ReclaimSubprotocol(this.peer, splitStr[0], Integer.parseInt(splitStr[1])).start();
@@ -155,13 +149,12 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
           tries--;
       }
 
-      System.out.println("Couldn't reclaim.");
+      System.out.println("Couldn't set to limit: Coulnd't reclaim space! ... \n\n");
 
   }
-  
+
   public State state(){
 	  State state = new State(this.peer);
-	  
 	  return state;
   }
 

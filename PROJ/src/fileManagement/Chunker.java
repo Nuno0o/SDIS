@@ -64,9 +64,6 @@ public class Chunker {
 		byte[] data = new byte[Constants.MAX_BODY_SIZE];
 		//Length read from file
 		int length = -1;
-		//Read data from file
-
-		System.out.println(chunkRead + " : " + chunkNo);
 
 		try{
 			length = this.fis.read(data, 0, Constants.MAX_BODY_SIZE);

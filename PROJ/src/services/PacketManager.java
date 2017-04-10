@@ -33,7 +33,7 @@ public class PacketManager extends Thread {
 		String[] splitStr = new String(packetData, 0, length).split("\\s+");
 
 		String packet = new String(packetData, 0, length);
-		
+
 		if(!splitStr[1].equals(this.peer.protocol_version)){
 			return;
 		}
@@ -76,7 +76,6 @@ public class PacketManager extends Thread {
 		if(ChunksStored.containsChunk(splitStr[3], Integer.parseInt(splitStr[4]))){
 			return true;
 		}
-		System.out.println("Received chunk #" + splitStr[4]);
 		//Verificar se ha espao
 		if (length > (this.peer.storageSpace - ChunksStored.getSpaceUsed())){
 			System.out.println("Couldn't store chunk: not enough space!");
@@ -84,6 +83,7 @@ public class PacketManager extends Thread {
 		}
 		//Incrementar
 		if(PutchunksSending.incrementResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
+			System.out.println("PUTCHUNK received successfully, storing chunk.");
 			return true;
 		}
 
@@ -111,7 +111,7 @@ public class PacketManager extends Thread {
 		String[] splitStr = packet.split("\\s+");
 
 		if(ChunksSending.incrementResponses(splitStr[3],Integer.parseInt(splitStr[4]))){
-			System.out.println("Received stored chunk #" + splitStr[4]);
+			System.out.println("Got STORED, acknowledged.");
 			return true;
 		}
 
@@ -139,11 +139,11 @@ public class PacketManager extends Thread {
 	            this.peer.mcastMC,
 	            this.peer.portMC);
 		try{
+			System.out.println("Sending STORED to peers...\n");
 			this.peer.MC.writeToMulticast(packet);
 		}catch(Exception e){
 				System.out.println("Error sending stored msg");
 		}
-		System.out.println("Sent stored #" + chunk.chunkNo);
 		return true;
 	}
 
@@ -157,6 +157,7 @@ public class PacketManager extends Thread {
 											this.peer.portMDR);
 
 		try {
+			System.out.println("Sending CHUNK to peers...\n");
 			this.peer.MDR.msocket.send(packet);
 		} catch (Exception e){
 			System.err.println("Errror sending chunk message");
@@ -168,8 +169,6 @@ public class PacketManager extends Thread {
 
 	public boolean handleGetChunk(String packet){
 
-		System.out.println(packet);
-
 		String[] splitStr = packet.split("\\s+");
 
 		String fileId = splitStr[3];
@@ -177,7 +176,7 @@ public class PacketManager extends Thread {
 		if (ChunksStored.containsChunk(fileId,Integer.parseInt(splitStr[4]))){
 			try{
 				ChunksRestSending.add(fileId, Integer.parseInt(splitStr[4]));
-				System.out.println("Starting restore: " + fileId + ":" + splitStr[4]);
+
 				RestoreSendChunk r = new RestoreSendChunk(this.peer,fileId,Integer.parseInt(splitStr[4]),ChunksStored.getChunkData(fileId, Integer.parseInt(splitStr[4])));
 				r.start();
 			}catch(Exception e){
@@ -194,6 +193,7 @@ public class PacketManager extends Thread {
 	public boolean handleDelete(String packet){
 		String[] splitStr = packet.split("\\s+");
 
+		System.out.println("Got DELETE, trying to delete requested file.\n.\n.");
 		return ChunksStored.deleteFile(splitStr[3]);
 	}
 
@@ -203,6 +203,7 @@ public class PacketManager extends Thread {
 
 		//In case it's a chunk that's being sent and this is another peer that also responded with that chunk
 		if(ChunksRestSending.incrementResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
+			System.out.println("Got CHUNK message, acknowledged.\n");
 			return true;
 		}
 
@@ -223,8 +224,6 @@ public class PacketManager extends Thread {
 
 		String[] splitStr = packet.split("\\s+");
 
-		System.out.println("Real Rep Deg: " + ChunksStored.getRepDeg(splitStr[3],Integer.parseInt(splitStr[4])) + "; " + ChunksStored.getRealRepDeg(splitStr[3],Integer.parseInt(splitStr[4])));
-
 		// update local count of chunk (count --)
 		ChunksStored.decRepDeg(splitStr[3],Integer.parseInt(splitStr[4]));
 
@@ -238,12 +237,11 @@ public class PacketManager extends Thread {
 				e.printStackTrace();
 			}
 
-			//TODO: if  during the delay gets PUTCHUNK of the same file chunk, back off
 			if(PutchunksSending.hasResponses(splitStr[3], Integer.parseInt(splitStr[4]))){
+				System.out.println("Got PUTCHUNK, no need to backup. Backing off...\n\n");
 	    		return true;
 	    	}
 			// else
-
 			new BackupSubprotocol(	this.peer,
 			 						new FileChunk(splitStr[3],
 										ChunksStored.getChunkData(splitStr[3],Integer.parseInt(splitStr[4])),
@@ -251,7 +249,7 @@ public class PacketManager extends Thread {
 										ChunksStored.getRepDeg(splitStr[3],Integer.parseInt(splitStr[4]))),
 									ChunksStored.getRepDeg(splitStr[3],Integer.parseInt(splitStr[4]))).start();
 
-			System.out.println("Started BackupSubprotocol from Removed, everything operational.");
+			System.out.println("Started BackupSubprotocol from Reclaim, everything operational.");
 		}
 
 		return true;
