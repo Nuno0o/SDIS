@@ -20,7 +20,7 @@ public class Metadata {
 			this.fsize = fsize;
 		}
 	}
-	public static String filename = "metadata.txt";
+	public static String filename;
 	public static ArrayList<FileMetadata> metad = new ArrayList<FileMetadata>();
 	
 	public synchronized static void load(){
@@ -50,6 +50,24 @@ public class Metadata {
 		}catch(Exception e){
 			System.out.println("Error printing store message");
 		}
+	}
+	
+	public synchronized static ArrayList<String> getMetadPaths(){
+		load();
+		ArrayList<String> paths = new ArrayList<String>();
+		for(int i = 0;i < metad.size();i++){
+			paths.add(metad.get(i).fpath);
+		}
+		return paths;
+	}
+	
+	public synchronized static ArrayList<String> getMetadIds(){
+		load();
+		ArrayList<String> ids = new ArrayList<String>();
+		for(int i = 0;i < metad.size();i++){
+			ids.add(metad.get(i).fid);
+		}
+		return ids;
 	}
 	
 	public synchronized static void saveMetadata(String path, String fileid){

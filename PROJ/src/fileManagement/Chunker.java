@@ -39,10 +39,15 @@ public class Chunker {
 				this.fileid = b.toString();
 		}catch(Exception e){
 			System.err.println("Can't open file.");
+			file = null;
+			fis = null;
 		}
 
 		this.chunkNo = 0;
 		this.chunkRead = 0;
+	}
+	public boolean failedToOpen(){
+		return file == null;
 	}
 
 

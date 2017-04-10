@@ -19,7 +19,7 @@ public class ChunksStored {
 		}
 	}
 	//list of chunks stored
-	public static String filename = "storedchunks.txt";
+	public static String filename;
 	public static ArrayList<ChunkInfo> list = new ArrayList<ChunkInfo>();
 	//
 	public synchronized static void load(){
@@ -54,6 +54,34 @@ public class ChunksStored {
 			System.out.println("Error printing store message");
 		}
 	}
+	
+	public synchronized static ArrayList<Integer> getLengths(){
+		load();
+		ArrayList<Integer> lengths = new ArrayList<Integer>();
+		for(int i = 0;i < list.size();i++){
+			lengths.add((int)new File(list.get(i).filehash).length());
+		}
+		return lengths;
+	}
+	
+	public synchronized static ArrayList<Integer> getRealRepd(){
+		load();
+		ArrayList<Integer> reps = new ArrayList<Integer>();
+		for(int i = 0;i < list.size();i++){
+			reps.add(list.get(i).realRepDegree);
+		}
+		return reps;
+	}
+	
+	public synchronized static ArrayList<String> getIds(){
+		load();
+		ArrayList<String> ids = new ArrayList<String>();
+		for(int i = 0;i < list.size();i++){
+			ids.add(list.get(i).filehash);
+		}
+		return ids;
+	}
+	
 	public synchronized static Boolean addNew(FileChunk chunk){
 		load();
 		for(int i = 0;i < list.size();i++){

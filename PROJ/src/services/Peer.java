@@ -10,6 +10,9 @@ import java.rmi.AlreadyBoundException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 
+import fileManagement.ChunksStored;
+import fileManagement.Metadata;
+
 public class Peer {
 
 	//Peer information
@@ -39,6 +42,8 @@ public class Peer {
 		this.protocol_version = args[0];
 		this.peerNumber = Integer.parseInt(args[1]);
 		this.remote_name = args[2];
+		Metadata.filename = "metadata" + this.peerNumber + ".txt";
+		ChunksStored.filename = "storedchunks" + this.peerNumber + ".txt";
 		//Set multicast channels ips and ports
 		try{
 			this.mcastMC = InetAddress.getByName(args[3]);

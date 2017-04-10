@@ -33,6 +33,10 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       System.out.println("Backing up file in :" + path);
 
       this.chunker = new Chunker(path,repDeg);
+      
+      if(chunker.failedToOpen()){
+    	  return;
+      }
 
       FileChunk currentChunk = this.chunker.nextChunk();
 
@@ -156,7 +160,7 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
   }
   
   public State state(){
-	  State state = null;
+	  State state = new State(this.peer);
 	  
 	  return state;
   }

@@ -1,6 +1,7 @@
 package main;
 
 import services.RemoteServiceInterface;
+import services.State;
 
 import java.rmi.registry.Registry;
 import java.rmi.registry.LocateRegistry;
@@ -27,7 +28,10 @@ public class TestApp {
             Registry registry = LocateRegistry.getRegistry();
             RemoteServiceInterface remote = (RemoteServiceInterface) registry.lookup(peer_ap);
 
-            String filepath = args[2];
+            String filepath = null;
+            if(args.length  > 2){
+            	filepath = args[2];
+            }
 
             switch (op) {
                 case "BACKUP": {
@@ -45,7 +49,8 @@ public class TestApp {
                     remote.manageStorage(Integer.parseInt(args[2]));
                     break;
                 case "STATE":
-                	remote.state();
+                	State state = remote.state();
+                	state.display();
                 	break;
             }
 
