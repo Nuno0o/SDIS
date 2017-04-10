@@ -86,10 +86,27 @@ public class ChunksStored {
 
 	public synchronized static int getRepDeg(String fileid, int chunkNo){
 		load();
+
+		System.out.println("fled: " + fileid + "; " + chunkNo);
+
 		for (int i = 0; i < list.size(); i++){
 			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
 				if (list.get(i).chunkNo == chunkNo){
 					return list.get(i).RepDegree;
+				}
+
+			}
+		}
+		return -1;
+	}
+
+	public synchronized static int getRealRepDeg(String fileid, int chunkNo){
+		load();
+
+		for (int i = 0; i < list.size(); i++){
+			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
+				if (list.get(i).chunkNo == chunkNo){
+					return list.get(i).realRepDegree;
 				}
 
 			}
@@ -150,7 +167,7 @@ public class ChunksStored {
 		for (int i = 0; i < list.size(); i++){
 			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid)){
 				if (list.get(i).chunkNo == chunkNo){
-					list.get(i).RepDegree--;
+					list.get(i).realRepDegree--;
 					success = true;
 				}
 
@@ -172,7 +189,7 @@ public class ChunksStored {
 		}
 		return false;
 	}
-	
+
 	public synchronized static boolean containsChunk(String fileid,int chunkNo){
 		for (int i = 0; i < list.size(); i++){
 			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid) && list.get(i).chunkNo == chunkNo){

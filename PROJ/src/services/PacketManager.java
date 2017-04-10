@@ -77,7 +77,7 @@ public class PacketManager extends Thread {
 			return true;
 		}
 		System.out.println("Received chunk #" + splitStr[4]);
-		//Verificar se ha espaço
+		//Verificar se ha espao
 		if (length > (this.peer.storageSpace - ChunksStored.getSpaceUsed())){
 			System.out.println("Couldn't store chunk: not enough space!");
 			return false;
@@ -121,7 +121,7 @@ public class PacketManager extends Thread {
 			System.out.println("Received stored chunk #" + splitStr[4]);
 			return true;
 		}
-		
+
 		try{
         	Thread.sleep(Constants.ONE_SECOND);
         }catch(Exception e){
@@ -247,6 +247,8 @@ public class PacketManager extends Thread {
 
 		String[] splitStr = packet.split("\\s+");
 
+		System.out.println("Real Rep Deg: " + ChunksStored.getRepDeg(splitStr[3],Integer.parseInt(splitStr[4])) + "; " + ChunksStored.getRealRepDeg(splitStr[3],Integer.parseInt(splitStr[4])));
+
 		// update local count of chunk (count --)
 		ChunksStored.decRepDeg(splitStr[3],Integer.parseInt(splitStr[4]));
 
@@ -268,7 +270,7 @@ public class PacketManager extends Thread {
 
 			new BackupSubprotocol(	this.peer,
 			 						new FileChunk(splitStr[3],
-										new String (ChunksStored.getChunkData(splitStr[3],Integer.parseInt(splitStr[4]))).getBytes(),
+										ChunksStored.getChunkData(splitStr[3],Integer.parseInt(splitStr[4])),
 										Integer.parseInt(splitStr[4]),
 										ChunksStored.getRepDeg(splitStr[3],Integer.parseInt(splitStr[4]))),
 									ChunksStored.getRepDeg(splitStr[3],Integer.parseInt(splitStr[4]))).start();

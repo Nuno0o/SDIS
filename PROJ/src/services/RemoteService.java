@@ -100,9 +100,9 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
               System.out.println("This file hasn't been backed up.");
               return;
           }
-          
+
           FileRestoring.init(fileid, path, noChunks);
-          
+
           //Create threads that will request the chunks
           int currentChunk = 0;
 
@@ -142,14 +142,12 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
 
       int tries = 5;
       while (tries != 0){
-          if (map.lastEntry().getValue() > 0){
+          System.out.println(map.lastEntry());
               String[] splitStr = map.lastEntry().getKey().split(":");
-              if (ChunksStored.deleteChunk(splitStr[0], Integer.parseInt(splitStr[1]))){
-                  new ReclaimSubprotocol(this.peer, splitStr[0], Integer.parseInt(splitStr[1])).start();
-                  System.out.println("Removed: " + splitStr[0] + ":" + splitStr[1]);
-                  if (ChunksStored.getSpaceUsed() < kbs) return;
-              }
-          }
+              ChunksStored.deleteChunk(splitStr[0], Integer.parseInt(splitStr[1]));
+              new ReclaimSubprotocol(this.peer, splitStr[0], Integer.parseInt(splitStr[1])).start();
+              System.out.println("Removed: " + splitStr[0] + ":" + splitStr[1]);
+              if (ChunksStored.getSpaceUsed() < kbs) return;
           tries--;
       }
 
