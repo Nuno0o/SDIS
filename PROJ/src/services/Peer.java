@@ -44,6 +44,7 @@ public class Peer {
 		this.remote_name = args[2];
 		Metadata.filename = "metadata" + this.peerNumber + ".txt";
 		ChunksStored.filename = "storedchunks" + this.peerNumber + ".txt";
+		System.out.println(ChunksStored.filename);
 		//Set multicast channels ips and ports
 		try{
 			this.mcastMC = InetAddress.getByName(args[3]);

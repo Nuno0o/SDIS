@@ -22,7 +22,7 @@ public class Metadata {
 	}
 	public static String filename;
 	public static ArrayList<FileMetadata> metad = new ArrayList<FileMetadata>();
-	
+
 	public synchronized static void load(){
 		metad.clear();
 		//each line read
@@ -39,7 +39,7 @@ public class Metadata {
 		}catch(Exception e){
 		}
 	}
-	
+
 	public synchronized static void store(){
 		try{
 			PrintWriter pw = new PrintWriter(new FileWriter(filename));
@@ -51,7 +51,7 @@ public class Metadata {
 			System.out.println("Error printing store message");
 		}
 	}
-	
+
 	public synchronized static ArrayList<String> getMetadPaths(){
 		load();
 		ArrayList<String> paths = new ArrayList<String>();
@@ -60,7 +60,7 @@ public class Metadata {
 		}
 		return paths;
 	}
-	
+
 	public synchronized static ArrayList<String> getMetadIds(){
 		load();
 		ArrayList<String> ids = new ArrayList<String>();
@@ -69,14 +69,14 @@ public class Metadata {
 		}
 		return ids;
 	}
-	
+
 	public synchronized static void saveMetadata(String path, String fileid){
 		load();
 		FileMetadata newMetad = new FileMetadata(path,fileid,new File(path).length());
 		metad.add(newMetad);
 		store();
 	}
-	
+
 	public synchronized static String findMetadata(String path){
 		load();
 		String ret = null;
@@ -88,7 +88,7 @@ public class Metadata {
 		store();
 		return ret;
 	}
-	
+
     public synchronized static int findFileNoChunks(String path){
     	load();
     	long ret = -1;
@@ -100,7 +100,7 @@ public class Metadata {
     	store();
     	return (int)ret;
     }
-    
+
     public synchronized static void removeMetaData(String fid){
     	load();
     	for(int i = 0;i < metad.size();i++){
