@@ -28,27 +28,50 @@ public class TestApp {
             Registry registry = LocateRegistry.getRegistry();
             RemoteServiceInterface remote = (RemoteServiceInterface) registry.lookup(peer_ap);
 
-            String filepath = null;
-            if(args.length  > 2){
-            	filepath = args[2];
-            }
+            
 
             switch (op) {
                 case "BACKUP": {
+                	if (args.length != 4){
+                        System.out.println("usage: java TestApp <peer_ap> BACKUP PATH REPDEG");
+                        System.exit(1);
+                    }
+                	
                     int repDeg = Integer.parseInt(args[3]);
+                    String filepath = args[2];
                     remote.backup(filepath, repDeg);
                     break;
                 }
-                case "RESTORE":
+                case "RESTORE":{
+                	if (args.length != 3){
+                        System.out.println("usage: java TestApp <peer_ap> RESTORE PATH");
+                        System.exit(1);
+                    }
+                	String filepath = args[2];
                     remote.restore(filepath);
                     break;
-                case "DELETE":
+                    }
+                case "DELETE":{
+                	if (args.length != 3){
+                        System.out.println("usage: java TestApp <peer_ap> DELETE PATH");
+                        System.exit(1);
+                    }
+                	String filepath = args[2];
                     remote.delete(filepath);
                     break;
-                case "RECLAIM":
+                    }
+                case "RECLAIM":{
+                	if (args.length != 3){
+                        System.out.println("usage: java TestApp <peer_ap> RESTORE <OP1>");
+                        System.exit(1);
+                    }
                     remote.manageStorage(Integer.parseInt(args[2]));
-                    break;
+                    break;}
                 case "STATE":
+                	if (args.length != 2){
+                        System.out.println("usage: java TestApp <peer_ap> STATE");
+                        System.exit(1);
+                    }
                 	State state = remote.state();
                 	state.display();
                 	break;
