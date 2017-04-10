@@ -1,0 +1,13 @@
+SDIS 2016/2017 FIRST PROJECT
+
+To compile:
+-Navigate to src folder
+-Run "javac */*.java"
+
+To create peers:
+-Run "rmiregistry" in one terminal.
+-Run "java main/Main <Version> <Peer number> <Remote name> <MC ip> <MC port> <MDB ip> <MDB port> <MDR ip> <MDR port>" in another terminal
+	-For example, "java main/Main 1.0 1 remote 229.0.0.1 2000 229.0.2 2001 229.0.0.3 2003"
+
+To use the peers:
+-Run "java main/TestApp <Remote name> <Action> <Arg1>? <Arg2?>"
