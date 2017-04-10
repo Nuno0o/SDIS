@@ -154,5 +154,11 @@ public class RemoteService extends UnicastRemoteObject implements RemoteServiceI
       System.out.println("Couldn't reclaim.");
 
   }
+  
+  public State state(){
+	  State state = null;
+	  
+	  return state;
+  }
 
 }

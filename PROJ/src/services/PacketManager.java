@@ -33,6 +33,13 @@ public class PacketManager extends Thread {
 		String[] splitStr = new String(packetData, 0, length).split("\\s+");
 
 		String packet = new String(packetData, 0, length);
+		
+		if(!splitStr[1].equals(this.peer.protocol_version)){
+			return;
+		}
+		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
+			return;
+		}
 
 		if (splitStr[0].equals("PUTCHUNK")) {
 			handlePutChunk(packetData, length);
@@ -65,13 +72,6 @@ public class PacketManager extends Thread {
 		String[] splitStr = new String(packetData, 0, length).split("\\s+");
 		String[] splitStr2 = new String(packetData, 0, length).split(Constants.CRLF);
 
-
-		if(!splitStr[1].equals(this.peer.protocol_version)){
-			return false;
-		}
-		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
-			return false;
-		}
 		//Para caso de mensagem repetida e store j foi enviado
 		if(ChunksStored.containsChunk(splitStr[3], Integer.parseInt(splitStr[4]))){
 			return true;
@@ -109,13 +109,6 @@ public class PacketManager extends Thread {
 
 	public boolean handleStored(String packet){
 		String[] splitStr = packet.split("\\s+");
-
-		if(!splitStr[1].equals(this.peer.protocol_version)){
-			return false;
-		}
-		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
-			return false;
-		}
 
 		if(ChunksSending.incrementResponses(splitStr[3],Integer.parseInt(splitStr[4]))){
 			System.out.println("Received stored chunk #" + splitStr[4]);
@@ -178,12 +171,6 @@ public class PacketManager extends Thread {
 		System.out.println(packet);
 
 		String[] splitStr = packet.split("\\s+");
-		if(!splitStr[1].equals(this.peer.protocol_version)){
-			return false;
-		}
-		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
-			return false;
-		}
 
 		String fileId = splitStr[3];
 
@@ -206,24 +193,13 @@ public class PacketManager extends Thread {
 
 	public boolean handleDelete(String packet){
 		String[] splitStr = packet.split("\\s+");
-		if(!splitStr[1].equals(this.peer.protocol_version)){
-			return false;
-		}
-		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
-			return false;
-		}
+
 		return ChunksStored.deleteFile(splitStr[3]);
 	}
 
 	public boolean handleChunk(byte[] packetData, int length){
 		String[] splitStr = new String(packetData, 0, length).split("\\s+");
 		String[] splitStr2 = new String(packetData, 0, length).split(Constants.CRLF);
-		if(!splitStr[1].equals(this.peer.protocol_version)){
-			return false;
-		}
-		if(Integer.parseInt(splitStr[2]) == this.peer.peerNumber){
-			return false;
-		}
 
 		//In case it's a chunk that's being sent and this is another peer that also responded with that chunk
 		if(ChunksRestSending.incrementResponses(splitStr[3], Integer.parseInt(splitStr[4]))){

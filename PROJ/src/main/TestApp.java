@@ -44,6 +44,9 @@ public class TestApp {
                 case "RECLAIM":
                     remote.manageStorage(Integer.parseInt(args[2]));
                     break;
+                case "STATE":
+                	remote.state();
+                	break;
             }
 
         } catch (Exception e){
