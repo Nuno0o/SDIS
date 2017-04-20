@@ -4,6 +4,7 @@ import utilities.Constants;
 
 import java.io.*;
 import java.util.TreeMap;
+import java.util.Arrays;
 import java.util.ArrayList;
 
 public class ChunksStored {
@@ -54,7 +55,7 @@ public class ChunksStored {
 			System.out.println("Error printing store message");
 		}
 	}
-	
+
 	public synchronized static ArrayList<Integer> getLengths(){
 		load();
 		ArrayList<Integer> lengths = new ArrayList<Integer>();
@@ -63,7 +64,7 @@ public class ChunksStored {
 		}
 		return lengths;
 	}
-	
+
 	public synchronized static ArrayList<Integer> getRealRepd(){
 		load();
 		ArrayList<Integer> reps = new ArrayList<Integer>();
@@ -72,7 +73,7 @@ public class ChunksStored {
 		}
 		return reps;
 	}
-	
+
 	public synchronized static ArrayList<String> getIds(){
 		load();
 		ArrayList<String> ids = new ArrayList<String>();
@@ -81,7 +82,7 @@ public class ChunksStored {
 		}
 		return ids;
 	}
-	
+
 	public synchronized static Boolean addNew(FileChunk chunk){
 		load();
 		for(int i = 0;i < list.size();i++){
@@ -234,8 +235,9 @@ public class ChunksStored {
 			if(list.get(i).fileid.replaceAll("(\\r|\\n)","").equals(fileid) && list.get(i).chunkNo == chunkNo){
 				try{
 					FileInputStream reader = new FileInputStream(new String(fileid+":"+chunkNo));
-					byte[] data = new byte[Constants.MAX_BODY_SIZE];
-	 				reader.read(data, 0, Constants.MAX_BODY_SIZE);
+					int length = (int)(new File(list.get(i).fileid+":"+list.get(i).chunkNo).length());
+					byte[] data = new byte[length];
+		 			reader.read(data, 0, data.length);
 					return data;
 
 				}catch(Exception e){

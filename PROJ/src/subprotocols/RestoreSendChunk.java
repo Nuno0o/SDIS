@@ -33,9 +33,9 @@ public class RestoreSendChunk extends Thread {
     }
 
     public void run(){
-    	
-    	
-    	
+
+
+
     	if(ChunksRestSending.hasResponses(this.fileid, this.chunkNo)){
     		ChunksRestSending.remove(this.fileid, this.chunkNo);
     		return;
@@ -44,6 +44,8 @@ public class RestoreSendChunk extends Thread {
 
     	Message m = new Message();
 		byte[] chunkMsg = m.chunkMsg(this.peer.peerNumber, fileid, chunkNo, data);
+
+		System.out.println("chunkMsgLength : " + chunkMsg.length);
 
 		DatagramPacket packet = new DatagramPacket(chunkMsg,
 											chunkMsg.length,

@@ -88,7 +88,7 @@ public class PacketManager extends Thread {
 		}
 
 		//Create new chunk out of packet
-		FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length() + 2*Constants.CRLF.length(), length -1),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
+		FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length() + 2*Constants.CRLF.length(), length),Integer.parseInt(splitStr[4]),Integer.parseInt(splitStr[5]));
 		//Chunk name
 		String chunkname = chunk.fileId+":"+chunk.chunkNo;
 		//Store chunk in filesystem
@@ -210,7 +210,7 @@ public class PacketManager extends Thread {
 		if(FileRestoring.fileid.equals(splitStr[3])){
 
 
-			FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length() + 2*Constants.CRLF.length(), length -1),Integer.parseInt(splitStr[4]),1);
+			FileChunk chunk = new FileChunk(splitStr[3],Arrays.copyOfRange(packetData, splitStr2[0].length()+splitStr2[1].length() + 2*Constants.CRLF.length(), length),Integer.parseInt(splitStr[4]),1);
 			String path = splitStr[3]+":"+splitStr[4];
 			new WriteFile(chunk,path).run();
 			FileRestoring.addReceived(Integer.parseInt(splitStr[4]),path);
