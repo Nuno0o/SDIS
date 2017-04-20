@@ -147,9 +147,9 @@ public class PacketManager extends Thread {
 		return true;
 	}
 
-	public boolean sendChunkMessage(String fileId, int chunkNo, String data){
+	public boolean sendChunkMessage(String fileId, int chunkNo, byte[] data){
 		Message m = new Message();
-		byte[] chunkMsg = m.chunkMsg(this.peer.peerNumber, fileId, chunkNo, data.getBytes());
+		byte[] chunkMsg = m.chunkMsg(this.peer.peerNumber, fileId, chunkNo, data);
 
 		DatagramPacket packet = new DatagramPacket(chunkMsg,
 											chunkMsg.length,
